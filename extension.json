@@ -28,7 +28,7 @@
             "type": "Text",
             "required": "false",
             "label_key": "CONTAINER_NAME_KEY",
-            "desc_key": "CONTAINER_NAME_KEY"
+            "desc_key": "CONTAINER_NAME_DESC"
         },
         {
             "name": "COMMAND",
@@ -49,6 +49,7 @@ sample_deploy_script.sh",
         "shell": "#!/bin/bash
 set +x 
 set +e 
+export DEPLOY_TYPE=#DEPLOY_TYPE#
 export CONTAINER_NAME=#CONTAINER_NAME#
 . $EXT_DIR/_init.sh
 /bin/bash -e #COMMAND#"
