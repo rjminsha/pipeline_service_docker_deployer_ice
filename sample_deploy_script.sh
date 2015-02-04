@@ -98,7 +98,7 @@ deploy_container() {
     # wait for container to start 
     wait_for ${MY_CONTAINER_NAME}
     RESULT=$?
-    return RESULT
+    return ${RESULT}
 }
 
 deploy_simple () {
