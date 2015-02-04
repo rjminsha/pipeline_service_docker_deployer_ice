@@ -64,7 +64,7 @@ wait_for (){
         sleep 1
     done
     if [ "$STATE" != "Running" ]; then
-        echo -e "${red}Failed to start instance ${WAITING_FOR}"
+        echo -e "${red}Failed to start instance ${no_color}"
         return 1
     fi  
     return 0 
@@ -96,8 +96,9 @@ deploy_container() {
     fi 
 
     # wait for container to start 
-    wait_for ${MY_CONTAINER_NAME} 
-    return 0
+    wait_for ${MY_CONTAINER_NAME}
+    RESULT=$?
+    return RESULT
 }
 
 deploy_simple () {
@@ -105,7 +106,7 @@ deploy_simple () {
     deploy_container ${MY_CONTAINER_NAME}
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
-        exit 1
+        exit $RESULT
     fi
     update_inventory
 }
