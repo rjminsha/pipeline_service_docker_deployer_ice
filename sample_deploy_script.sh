@@ -58,7 +58,7 @@ wait_for (){
     fi 
     COUNTER=0
     STATE="unknown"
-    while [[ ( $COUNTER -lt 30 ) && ( "${STATE}" != "Running" ) ]]; do
+    while [[ ( $COUNTER -lt 60 ) && ("${STATE}" == "BUILD") ]]; do
         let COUNTER=COUNTER+1 
         STATE=$(ice inspect $WAITING_FOR | grep "Status" | awk '{print $2}' | sed 's/"//g') && echo "${WAITING_FOR} is ${STATE}"
         sleep 1
