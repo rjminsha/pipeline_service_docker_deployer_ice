@@ -45,7 +45,7 @@ dump_info () {
 }
 
 update_inventory(){
-    echo "${red}TBD: update inventory${no_color}"
+    echo -e "${red}TBD: update inventory${no_color}"
 }
 
 # function to wait for a container to start 
@@ -81,7 +81,7 @@ deploy_container() {
     ice inspect ${MY_CONTAINER_NAME} > /dev/null
     FOUND=$?
     if [ ${FOUND} -eq 0 ]; then 
-        echo -e "{red}${MY_CONTAINER_NAME} already exists.  If you wish to replace it remove it or use the red_black deployer strategy${no_color}"
+        echo -e "${red}${MY_CONTAINER_NAME} already exists.  If you wish to replace it remove it or use the red_black deployer strategy${no_color}"
         dump_info 
         return 1
     fi  
