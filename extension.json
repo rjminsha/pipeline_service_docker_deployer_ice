@@ -51,8 +51,9 @@ export IMAGE_NAME=#IMAGE_NAME#
 export CONTAINER_NAME=#CONTAINER_NAME#
 set +x 
 set +e 
+echo \"Extension dir: ${EXT_DIR}.  Contents: \" 
+ls $EXT_DIR 
 . $EXT_DIR/_init.sh
-. $EXT_DIR/_initDeploy.sh
 /bin/bash -e #COMMAND#"
     }
     },
