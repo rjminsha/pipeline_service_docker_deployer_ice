@@ -6,6 +6,10 @@
     "extension_type": "Deploy",
     "inputs": [
         {
+            "type": "Artifacts",
+            "inclusion" : "always"
+        },
+        {
             "type": "Bluemix",
             "inclusion" : "always"
         }
