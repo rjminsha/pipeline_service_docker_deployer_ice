@@ -16,11 +16,19 @@
 #********************************************************************************
 usage () { 
     echo -e "${label_color}Usage:${no_label}"
-    echo "Set the following environment variables"
+    echo "Set the following as a parameter on the job, or as an environment variable on the stage"
     echo "DEPLOY_TYPE: "
     echo "              simple: simply deploy a container and set the inventory"
     echo "              simple_public: simply deploy the container and assign a floating IP address to the container"
     echo "              red_black: deploy new container, assign floating IP address, keep original container"
+    echo ""
+    
+    echo "The following environement variables can be set on the stage:"
+    echo "DEPLOY_TYPE"
+    echo "API_KEY"
+    echo "IMAGE_NAME"
+    echo "CONTAINER_NAME"
+    echo "API_URL"
 }
 
 dump_info () {

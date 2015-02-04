@@ -22,13 +22,6 @@
             "default_value": "simple",
             "label_key": "DEPLOY_TYPE_KEY",
             "desc_key": "DEPLOY_TYPE_DESC"
-        },
-        {
-            "name": "IMAGE_NAME",
-            "type": "Text",
-            "required": "false",
-            "label_key": "IMAGE_NAME_KEY",
-            "desc_key": "IMAGE_NAME_DESC"
         },        
         {
             "name": "CONTAINER_NAME",
