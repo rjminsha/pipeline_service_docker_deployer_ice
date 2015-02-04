@@ -79,7 +79,6 @@ if [ $RESULT -ne 0 ]; then
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
         echo -e "${red}Failed to install IBM Container Service CLI ${no_color}"
-        debugme echo -e "${label}Is python installed ${no_color}"
         debugme python --version
         debugme which python 
         debugme echo $PATH
@@ -111,8 +110,13 @@ fi
 if [ -z $IMAGE_NAME ]; then
     if [ -f "build.properties" ]; then
         . build.properties 
+        export IMAGE_NAME
+        debugme more build.properties 
+        debugme echo "echo IMAGE_NAME: $IMAGE_NAME"
     else 
-        echo "could not find build.properties"
+        echo -e "${red}IMAGE_NAME was not set in the environment, and no build.properties was included in the input to the job."       
+        debugme pwd 
+        debugme ls 
     fi  
     if [ -z $IMAGE_NAME ]; then
         echo "${red}IMAGE_NAME not set.  Set the IMAGE_NAME in the environment or provide a Docker build job as input to this deploy job ${no_label}"
