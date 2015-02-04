@@ -1,0 +1,65 @@
+{
+    "id": "ibm.devops.services.pipeline.docker.deploy.ice",
+    "version": 1,
+    "name_key": "ExtName",
+    "desc_key": "ExtDesc",
+    "extension_type": "Deploy",
+    "inputs": [
+        {
+            "type": "Bluemix",
+            "inclusion" : "always"
+        }
+    ],
+    "params": [
+        {
+            "name": "DEPLOY_TYPE",
+            "type": "Text",
+            "required": "true",
+            "default_value": "simple",
+            "label_key": "DEPLOY_TYPE_KEY",
+            "desc_key": "DEPLOY_TYPE_DESC"
+        },
+        {
+            "name": "IMAGE_NAME",
+            "type": "Text",
+            "required": "false",
+            "label_key": "IMAGE_NAME_KEY",
+            "desc_key": "IMAGE_NAME_DESC"
+        },        
+        {
+            "name": "CONTAINER_NAME",
+            "type": "Text",
+            "required": "false",
+            "label_key": "CONTAINER_NAME_KEY",
+            "desc_key": "CONTAINER_NAME_KEY"
+        },
+        {
+            "name": "COMMAND",
+            "type": "TextArea",
+            "required": "true",
+            "default_value" : "#!/bin/bash
+# default docker deploy script
+# put your updates here
+sample_deploy_script.sh",
+            "label_key": "COMMAND_KEY",
+            "desc_key": "COMMAND_DESC"
+        }
+    ],
+    "outputs": [
+    ],
+    "execution": {
+        "type": "JenkinsDocker",
+        "shell": "#!/bin/bash
+export IMAGE_NAME=#IMAGE_NAME#
+export CONTAINER_NAME=#CONTAINER_NAME#
+set +x 
+set +e 
+. $EXT_DIR/_init.sh
+. $EXT_DIR/_initDeploy.sh
+/bin/bash -e #COMMAND#"
+    }
+    },
+    "project": "https://hub.jazz.net/project/rjminsha/pipeline_service_docker_deployer_ice",
+    "project_example": "https://hub.jazz.net/pipeline/rjminsha/ice-pipeline_demo",
+    "project_contact": "rjminsha@us.ibm.com"
+}
