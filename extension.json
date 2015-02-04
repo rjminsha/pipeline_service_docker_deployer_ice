@@ -47,12 +47,18 @@ sample_deploy_script.sh",
     "execution": {
         "type": "JenkinsDocker",
         "shell": "#!/bin/bash
-export IMAGE_NAME=#IMAGE_NAME#
-export CONTAINER_NAME=#CONTAINER_NAME#
 set +x 
 set +e 
-echo \"Extension dir: ${EXT_DIR}.  Contents: \" 
-ls $EXT_DIR 
+if [ -z $CONTAINER_NAME ]; then 
+    export CONTAINER_NAME=#CONTAINER_NAME#
+    if [ $CONTAINER_NAME -eq "#CONTAINER_NAME#" ]; THEN 
+        echo -e \"${red}CONTAINER_NAME must be set either as a parameter on the job, or as an environment variable on the stage ${no_label}\"
+        exit 1
+    fi 
+else 
+    echo -e \"${label_key}Container name is set in the environment to ${CONTAINER_NAME}, overridding parameters\"
+fi 
+
 . $EXT_DIR/_init.sh
 /bin/bash -e #COMMAND#"
     }

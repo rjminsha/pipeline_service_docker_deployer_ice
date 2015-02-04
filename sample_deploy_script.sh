@@ -15,7 +15,7 @@
 #   See the License for the specific language governing permissions and
 #********************************************************************************
 usage () { 
-    echo -e "${label_color}Usage:${no_label}"
+    echo -e "${label_color}Usage:${no_color}"
     echo "Set the following as a parameter on the job, or as an environment variable on the stage"
     echo "DEPLOY_TYPE: "
     echo "              simple: simply deploy a container and set the inventory"
@@ -32,20 +32,20 @@ usage () {
 }
 
 dump_info () {
-    echo -e "${label_color}Container Information: ${no_label}"
+    echo -e "${label_color}Container Information: ${no_color}"
     echo "Running Containers: "
     ice ps 
     echo "Available floating IP addresses"
     ice ip list --all
     echo "All floating IP addresses"
     ice ip list --all
-    echo -e "${label_color}Current limitations:${no_label}"
+    echo -e "${label_color}Current limitations:${no_color}"
     echo "     # of containers: 8"
     echo "     # of floating IP addresses: 2"
 }
 
 update_inventory(){
-    echo "${red}TBD: update inventory${no_label}"
+    echo "${red}TBD: update inventory${no_color}"
 }
 
 # function to wait for a container to start 
@@ -53,7 +53,7 @@ update_inventory(){
 wait_for (){
     local WAITING_FOR=$1 
     if [ -z ${WAITING_FOR} ]; then 
-        echo "${red}Expected container name to be passed into wait_for${no_label}"
+        echo "${red}Expected container name to be passed into wait_for${no_color}"
         return 1
     fi 
     COUNTER=0
@@ -73,7 +73,7 @@ wait_for (){
 deploy_container() {
     local MY_CONTAINER_NAME=$1 
     if [ -z MY_CONTAINER_NAME ];then 
-        echo "${red}No container name was provided${no_label}"
+        echo "${red}No container name was provided${no_color}"
         return 1 
     fi 
 
@@ -81,7 +81,7 @@ deploy_container() {
     ice inspect ${MY_CONTAINER_NAME} > /dev/null
     FOUND=$?
     if [ ${FOUND} -eq 0 ]; then 
-        echo -e "{red}${MY_CONTAINER_NAME} already exists.  If you wish to replace it remove it or use the red_black deployer strategy${no_label}"
+        echo -e "{red}${MY_CONTAINER_NAME} already exists.  If you wish to replace it remove it or use the red_black deployer strategy${no_color}"
         dump_info 
         return 1
     fi  
@@ -90,7 +90,7 @@ deploy_container() {
     ice run --name "${MY_CONTAINER_NAME}" ${IMAGE_NAME}
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
-        echo -e "${red}Failed to deploy ${MY_CONTAINER_NAME} using ${IMAGE_NAME}${no_label}"
+        echo -e "${red}Failed to deploy ${MY_CONTAINER_NAME} using ${IMAGE_NAME}${no_color}"
         dump_info
         return 1
     fi 
@@ -118,12 +118,12 @@ deploy_public () {
     #       or if the floating IP address is not available then report an error 
     # Deploy new container using IMAGE_NAME and CONTAINER_NAME 
     # Assign floating IP address
-    echo -e "${red}simple_public docker deploy not currently supported${no_label}"
+    echo -e "${red}simple_public docker deploy not currently supported${no_color}"
     exit 1
 }
 
 deploy_red_black () {
-    echo -e "${red}red_black docker deploy not currently supported${no_label}"
+    echo -e "${red}red_black docker deploy not currently supported${no_color}"
     exit 1
 }
     
@@ -142,7 +142,7 @@ elif [ "${DEPLOY_TYPE}" == "simple_public" ]; then
 elif [ "${DEPLOY_TYPE}" == "red_black" ]; then 
     deploy_red_black
 else 
-    echo -e "${label_color}Defaulting to simple deploy${no_label}"
+    echo -e "${label_color}Defaulting to simple deploy${no_color}"
     usage
     deploy_simple
 fi 
