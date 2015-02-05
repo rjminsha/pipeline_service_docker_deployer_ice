@@ -125,7 +125,12 @@ if [ -z $IMAGE_NAME ]; then
 else 
     echo -e "${label_color}Image being overridden by the environment.  Using ${IMAGE_NAME} ${no_color}"
 fi 
-############################
-# Identify Container Name  #
-############################
-
+########################
+# Current Limitations  #
+########################
+if [ -z $IP_LIMIT ]; then 
+    export IP_LIMIT=2
+fi 
+if [ -z $CONTAINER_LIMIT ]; then 
+    export CONTAINER_LIMIT=8
+fi 
