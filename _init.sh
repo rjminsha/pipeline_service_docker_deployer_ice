@@ -64,16 +64,16 @@ fi
 debugme echo "##################"
 debugme echo "installing ICE"
 debugme echo "##################"
-ice help > /dev/null
+ice help > /dev/null 2>&1 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     pushd . 
     cd $EXT_DIR
-    sudo apt-get -y install python2.7 >> init.log 
+    sudo apt-get -y install python2.7 >> init.log 2>&1 
     debugme more pythoninstall.log 
     python get-pip.py --user >> init.log 
     export PATH=$PATH:~/.local/bin
-    pip install --user icecli-2.0.zip >> init.log 
+    pip install --user icecli-2.0.zip >> init.log 2>&1 
     ice help >> init.log 
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
@@ -84,7 +84,7 @@ if [ $RESULT -ne 0 ]; then
     echo -e "${label_color}Successfully installed IBM Container Service CLI ${no_color}"
 fi 
 
-ice login --key ${API_KEY} >> init.log 
+ice login --key ${API_KEY} >> init.log 2>&1 
 RESULT=$?
 if [ $RESULT -eq 1 ]; then
     echo -e "${red}Failed to login to IBM Container Service${no_color}"
@@ -107,7 +107,7 @@ if [ -z $IMAGE_NAME ]; then
     if [ -f "build.properties" ]; then
         . build.properties 
         export IMAGE_NAME
-        more build.properties >> init.log 
+        more build.properties >> init.log
         echo "echo IMAGE_NAME: $IMAGE_NAME" >> init.log 
     else 
         echo -e "${red}IMAGE_NAME was not set in the environment, and no build.properties was included in the input to the job."       
@@ -128,6 +128,6 @@ fi
 if [ -z $CONTAINER_LIMIT ]; then 
     export CONTAINER_LIMIT=8
 fi 
-sudo apt-get install bc >> init.log 
+sudo apt-get install bc >> init.log 2>&1 
 debugme more init.log 
 
