@@ -74,7 +74,7 @@ if [ $RESULT -ne 0 ]; then
     python get-pip.py --user
     export PATH=$PATH:~/.local/bin
     pip --version 
-    pip install --user icecli-1.0-0129.zip
+    pip install --user icecli-2.0.zip
     ice help
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
