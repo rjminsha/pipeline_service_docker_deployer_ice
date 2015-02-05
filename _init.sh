@@ -64,7 +64,7 @@ fi
 debugme echo "##################"
 debugme echo "installing ICE"
 debugme echo "##################"
-ice help > /dev/null 2>&1 
+ice help >> init.log 2>&1  
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     pushd . 
