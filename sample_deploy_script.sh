@@ -137,6 +137,7 @@ deploy_simple () {
     if [ $RESULT -ne 0 ]; then
         exit $RESULT
     fi
+    dump_info
     update_inventory
 }
 
