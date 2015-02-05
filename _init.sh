@@ -64,31 +64,27 @@ fi
 debugme echo "##################"
 debugme echo "installing ICE"
 debugme echo "##################"
-ice help 
+ice help > /dev/null
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     pushd . 
     cd $EXT_DIR
-    sudo apt-get -y install python2.7
-    python --version 
-    python get-pip.py --user
+    sudo apt-get -y install python2.7 >> init.log 
+    debugme more pythoninstall.log 
+    python get-pip.py --user >> init.log 
     export PATH=$PATH:~/.local/bin
-    pip --version 
-    pip install --user icecli-2.0.zip
-    ice help
+    pip install --user icecli-2.0.zip >> init.log 
+    ice help >> init.log 
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
         echo -e "${red}Failed to install IBM Container Service CLI ${no_color}"
-        debugme python --version
-        debugme which python 
-        debugme echo $PATH
         exit $RESULT
     fi 
     popd 
     echo -e "${label_color}Successfully installed IBM Container Service CLI ${no_color}"
 fi 
 
-ice login --key ${API_KEY}
+ice login --key ${API_KEY} >> init.log 
 RESULT=$?
 if [ $RESULT -eq 1 ]; then
     echo -e "${red}Failed to login to IBM Container Service${no_color}"
@@ -111,12 +107,10 @@ if [ -z $IMAGE_NAME ]; then
     if [ -f "build.properties" ]; then
         . build.properties 
         export IMAGE_NAME
-        debugme more build.properties 
-        debugme echo "echo IMAGE_NAME: $IMAGE_NAME"
+        more build.properties >> init.log 
+        echo "echo IMAGE_NAME: $IMAGE_NAME" >> init.log 
     else 
         echo -e "${red}IMAGE_NAME was not set in the environment, and no build.properties was included in the input to the job."       
-        debugme pwd 
-        debugme ls 
     fi  
     if [ -z $IMAGE_NAME ]; then
         echo "${red}IMAGE_NAME not set.  Set the IMAGE_NAME in the environment or provide a Docker build job as input to this deploy job ${no_label}"
@@ -134,4 +128,6 @@ fi
 if [ -z $CONTAINER_LIMIT ]; then 
     export CONTAINER_LIMIT=8
 fi 
-sudo apt-get install bc
+sudo apt-get install bc >> init.log 
+debugme more init.log 
+
