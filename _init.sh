@@ -134,3 +134,4 @@ fi
 if [ -z $CONTAINER_LIMIT ]; then 
     export CONTAINER_LIMIT=8
 fi 
+sudo apt-get install bc
