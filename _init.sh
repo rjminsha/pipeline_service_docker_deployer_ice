@@ -37,6 +37,7 @@ debugme ls
 debugme echo
 
 set +e
+set +x 
 
 ########################
 # API Server           #
