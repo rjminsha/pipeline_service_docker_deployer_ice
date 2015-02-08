@@ -52,7 +52,7 @@ fi
 if [ -z $API_KEY ]; then
     if [[ "$DEBUG" == 1 ]] || [[ "$BUILD_USER" == "minshallrobbie" ]] || [[ "$CF_APP" == "ice-pipeline-demo" ]] || [[ "$CF_ORG" == "rjminsha@us.ibm.com" ]] || [[ "$GIT_URL" == "https://hub.jazz.net/git/rjminsha/ice-pipeline-demo" ]] || [[ "$GIT_URL" == "https://hub.jazz.net/git/rjminsha/container-pipeline-demo" ]]; then
         echo -e "${label_color}Using demo API key, please update set API_KEY in the environment${no_color}"
-        export API_KEY="07889a87b6429714618fe23153c20e00cf02724573dedc9e"
+        export API_KEY="a8fef97b461bd17b0c5c491b6b04d3f38f4b7e398d32c21a"
     else 
         echo -e "${red}API_KEY must be set in the environement.  Add this in setenv.sh in the root of your project. ${no_color}"
         exit 1
