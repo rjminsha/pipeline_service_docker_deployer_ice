@@ -80,8 +80,11 @@ if [ -z "$API_KEY" ]; then
     if [ -z "$BLUEMIX_ORG" ]; then 
         if [ -n $CF_BLUEMIX_ORG ]; then 
             export BLUEMIX_ORG=$CF_BLUEMIX_ORG
-        else 
+        elif [[ -z "$BLUEMIX_USER" ]]; then
             export BLUEMIX_ORG=$BLUEMIX_USER
+        else 
+            echo -e "${red}Please set $BLUEMIX_USER and $BLUEMIX_ORG on the environment${no_color}"
+            exit 1
         fi 
         echo -e "${label_color} Using ${BLUEMIX_ORG} for Bluemix organization, please set BLUEMIX_ORG if on the environment if you wish to change this. ${no_color} "
     fi 
