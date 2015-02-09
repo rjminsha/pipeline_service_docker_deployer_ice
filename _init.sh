@@ -55,7 +55,10 @@ fi
 
 # If API_KEY is not provided get the org and space information 
 if [ -z "$API_KEY" ]; then 
+    pushd . 
+    cd ${EXT_DIR}
     $(node cf_parser.js ~/.cf/config.json)
+    popd 
     echo "got org $CF_BLUEMIX_ORG from config.json" >> init.log
     echo "got space $CF_BLUEMIX_SPACE from config.json" >> init.log
 
