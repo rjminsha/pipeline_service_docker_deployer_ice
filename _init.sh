@@ -63,13 +63,6 @@ if [ -n "$BLUEMIX_TARGET" ]; then
         if [ -z "$BLUEMIX_SPACE" ]; then 
             export BLUEMIX_SPACE="dev"
         fi 
-
-        if [ $REGISTRY_SERVER == $CCS_REGISTRY_HOST ]; then 
-            echo "Targeting CCS_API_HOST ${CCS_API_HOST},CCS_REGISTRY_HOST ${CCS_REGISTRY_HOST}, ${BLUEMIX_API_HOST} "
-        else
-            echo -e "${red}Registry specified in target ( ${REGISTRY_SERVER} ) does not match the registry specified as a parameter ( ${CCS_REGISTRY_HOST} ) ${no_color}"  
-            exit 1
-        fi 
     else 
         echo -e "${red}Unknown ${BLUEMIX_TARGET} specified"
     fi 
