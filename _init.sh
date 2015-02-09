@@ -35,41 +35,63 @@ set +e
 set +x 
 
 
-########################
-# Bluemix information  #
-########################
-#  ice --verbose login --cf -H api-ice.stage1.ng.bluemix.net/ -R registry-ice.stage1.ng.bluemix.net/ --api api.stage1.ng.bluemix.net
-# CCS host url         : https://api-ice.stage1.ng.bluemix.net//v2/containers
-# Registry host        : registry-ice.stage1.ng.bluemix.net/
-# Bluemix api url      : api.stage1.ng.bluemix.net
-# Bluemix Org          : rjminsha@us.ibm.com (ea3dbb75-8f5d-4960-b3db-dd755e60ce9c)
-# Bluemix Space        : dev (570e8a76-a833-45b0-ad50-846947fc9da1)
+#################################
+# Set Bluemix Host Information  #
+#################################
 if [ -n "$BLUEMIX_TARGET" ]; then
     if [ "$BLUEMIX_TARGET" == "staging" ]; then 
         export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
         export CCS_REGISTRY_HOST="registry-ice.stage1.ng.bluemix.net"
         export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
-        if [ -z "$BLUEMIX_USER" ]; then 
-            echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
-            exit 1
-        fi 
-        if [ -z "$BLUEMIX_PASSWORD" ]; then 
-            echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
-            exit 1 
-        fi 
-        if [ -z "$BLUEMIX_ORG" ]; then 
-            export BLUEMIX_ORG=$BLUEMIX_USER
-        fi 
-        if [ -z "$BLUEMIX_SPACE" ]; then 
-            export BLUEMIX_SPACE="dev"
-        fi 
+
     else 
         echo -e "${red}Unknown ${BLUEMIX_TARGET} specified"
     fi 
-else 
-    echo "Reading bluemix target environment from pipeline configuration"
-    echo -e "${label_color}TBD: load information from Cloud Fourndry credentials ${no_color}"
 fi 
+
+###################################
+# Get Bluemix Target Information  #
+###################################
+
+# If API_KEY is not provided get the org and space information 
+if [ -z "$API_KEY" ]; then 
+    $(node cf_parser.js ~/.cf/config.json)
+    echo "got org $CF_BLUEMIX_ORG from config.json" >> init.log
+    echo "got space $CF_BLUEMIX_SPACE from config.json" >> init.log
+
+    if [ -z "$BLUEMIX_ORG" ]; then 
+        if [ -n $CF_BLUEMIX_ORG ]; then 
+            export BLUEMIX_ORG=$CF_BLUEMIX_ORG
+        else 
+            export BLUEMIX_ORG=$BLUEMIX_USER
+        fi 
+        echo -e "${label_color} Using ${BLUEMIX_ORG} for Bluemix organization, please set BLUEMIX_ORG if on the environment if you wish to change this. ${no_color} "
+    fi 
+    if [ -z "$BLUEMIX_SPACE" ]; then
+        if [ -n "CF_BLUEMIX_SPACE" ]; then  
+            export BLUEMIX_SPACE=$CF_BLUEMIX_SPACE
+        else 
+            export BLUEMIX_SPACE="dev"
+        fi 
+        echo -e "${no_color} Using ${BLUEMIX_SPACE} for Bluemix space, please set BLUEMIX_SPACE if on the environment if you wish to change this. ${no_color} "
+    fi 
+fi 
+
+# Get the Bluemix user and password information 
+if [ -z "$BLUEMIX_USER" ]; then 
+    export BLUEMIX_USER=${CF_BLUEMIX_ORG}
+    if [ -z "$BLUEMIX_USER" ]; then 
+        echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
+        exit 1
+    else 
+        echo -e "${label_color} Using ${CF_BLUEMIX_ORG} as default user, please set BLUEMIX_USER on environment ${no_color} "
+    fi 
+fi 
+if [ -z "$BLUEMIX_PASSWORD" ]; then 
+    echo -e "${red} Please set BLUEMIX_PASSWORD as an environment property environment ${no_color} "
+    exit 1 
+fi 
+
 
 ######################
 # Install ICE CLI    #
@@ -127,6 +149,7 @@ elif [[ -n "$BLUEMIX_TARGET" ]]; then
     debugme more  /home/jenkins/.cf/config.json 
     rm  /home/jenkins/.cf/config.json 
     
+    debugme echo "testing connectivity to services"
     debugme ping -c 5 -t 10 ${CCS_API_HOST}
     debugme ping -c 5 -t 10 ${BLUEMIX_API_HOST}
     debugme ping -c 5 -t 10 ${CCS_REGISTRY_HOST}
