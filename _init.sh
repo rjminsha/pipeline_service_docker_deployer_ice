@@ -105,8 +105,7 @@ echo -e "${label_color}Targetting information.  Can be updated by setting enviro
 echo "BLUEMIX_USER: ${BLUEMIX_SPACE}"
 echo "BLUEMIX_SPACE: ${BLUEMIX_SPACE}"
 echo "BLUEMIX_ORG: ${BLUEMIX_ORG}"
-echo "CF_BLUEMIX_SPACE: ${CF_BLUEMIX_SPACE}"
-echo "CF_BLUEMIX_ORG: ${CF_BLUEMIX_ORG}"
+echo "BLUEMIX_PASSWORD: xxxxx"
 echo ""
 
 
@@ -173,10 +172,8 @@ elif [[ -n "$BLUEMIX_TARGET" ]]; then
 
     debugme echo "login command: ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}"
     ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}
-    debugme more  /home/jenkins/.cf/config.json 
-    debugme more /home/jenkins/.ice/ice-cfg.ini
-    debugme ice info
     RESULT=$?
+    debugme ice info
 else 
     echo -e "${red}TBD: support for token passed from pipeline via Cloud Foundry ${no_color}"
     exit 1 
