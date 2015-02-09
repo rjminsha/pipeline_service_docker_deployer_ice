@@ -174,6 +174,8 @@ elif [[ -n "$BLUEMIX_TARGET" ]]; then
     ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}
     RESULT=$?
     debugme ice info
+    debugme which cf 
+    
 else 
     echo -e "${red}TBD: support for token passed from pipeline via Cloud Foundry ${no_color}"
     exit 1 
