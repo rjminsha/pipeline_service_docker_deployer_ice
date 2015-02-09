@@ -53,14 +53,29 @@ fi
 # Get Bluemix Target Information  #
 ###################################
 
+# Get the Bluemix user and password information 
+if [ -z "$BLUEMIX_USER" ]; then 
+    export BLUEMIX_USER=${CF_BLUEMIX_ORG}
+    if [ -z "$BLUEMIX_USER" ]; then 
+        echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
+        exit 1
+    else 
+        echo -e "${label_color} Using ${CF_BLUEMIX_ORG} as default user, please set BLUEMIX_USER on environment ${no_color} "
+    fi 
+fi 
+if [ -z "$BLUEMIX_PASSWORD" ]; then 
+    echo -e "${red} Please set BLUEMIX_PASSWORD as an environment property environment ${no_color} "
+    exit 1 
+fi 
+
 # If API_KEY is not provided get the org and space information 
 if [ -z "$API_KEY" ]; then 
     pushd . 
     cd ${EXT_DIR}
     $(node cf_parser.js ~/.cf/config.json)
     popd 
-    echo "got org $CF_BLUEMIX_ORG from config.json" >> init.log
-    echo "got space $CF_BLUEMIX_SPACE from config.json" >> init.log
+    debugme echo "got org $CF_BLUEMIX_ORG from config.json" 
+    debugme echo "got space $CF_BLUEMIX_SPACE from config.json" 
 
     if [ -z "$BLUEMIX_ORG" ]; then 
         if [ -n $CF_BLUEMIX_ORG ]; then 
@@ -80,20 +95,6 @@ if [ -z "$API_KEY" ]; then
     fi 
 fi 
 
-# Get the Bluemix user and password information 
-if [ -z "$BLUEMIX_USER" ]; then 
-    export BLUEMIX_USER=${CF_BLUEMIX_ORG}
-    if [ -z "$BLUEMIX_USER" ]; then 
-        echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
-        exit 1
-    else 
-        echo -e "${label_color} Using ${CF_BLUEMIX_ORG} as default user, please set BLUEMIX_USER on environment ${no_color} "
-    fi 
-fi 
-if [ -z "$BLUEMIX_PASSWORD" ]; then 
-    echo -e "${red} Please set BLUEMIX_PASSWORD as an environment property environment ${no_color} "
-    exit 1 
-fi 
 
 
 ######################
