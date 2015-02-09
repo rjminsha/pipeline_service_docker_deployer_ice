@@ -31,33 +31,52 @@ debugme() {
 }
 export -f debugme 
 
-debugme echo "Current working directory and contents: "
-debugme pwd 
-debugme ls 
-debugme echo
-
 set +e
 set +x 
 
-########################
-# API Server           #
-########################
-if [ -z "$API_URL" ]; then
-    export API_URL="https://api-ice.ng.bluemix.net/v1.0"
-fi
 
-#######################################
-# Authorization and Authentication    #
-#######################################
-if [ -z $API_KEY ]; then
-    if [[ "$DEBUG" == 1 ]] || [[ "$BUILD_USER" == "minshallrobbie" ]] || [[ "$CF_APP" == "ice-pipeline-demo" ]] || [[ "$CF_ORG" == "rjminsha@us.ibm.com" ]] || [[ "$GIT_URL" == "https://hub.jazz.net/git/rjminsha/ice-pipeline-demo" ]] || [[ "$GIT_URL" == "https://hub.jazz.net/git/rjminsha/container-pipeline-demo" ]]; then
-        echo -e "${label_color}Using demo API key, please update set API_KEY in the environment${no_color}"
-        export API_KEY="a8fef97b461bd17b0c5c491b6b04d3f38f4b7e398d32c21a"
+########################
+# Bluemix information  #
+########################
+#  ice --verbose login --cf -H api-ice.stage1.ng.bluemix.net/ -R registry-ice.stage1.ng.bluemix.net/ --api api.stage1.ng.bluemix.net
+# CCS host url         : https://api-ice.stage1.ng.bluemix.net//v2/containers
+# Registry host        : registry-ice.stage1.ng.bluemix.net/
+# Bluemix api url      : api.stage1.ng.bluemix.net
+# Bluemix Org          : rjminsha@us.ibm.com (ea3dbb75-8f5d-4960-b3db-dd755e60ce9c)
+# Bluemix Space        : dev (570e8a76-a833-45b0-ad50-846947fc9da1)
+if [ -n "$BLUEMIX_TARGET" ]; then
+    if [ "$BLUEMIX_TARGET" == "staging" ]; then 
+        export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
+        export CCS_REGISTRY_HOST="registry-ice.stage1.ng.bluemix.net"
+        export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
+        if [ -z "$BLUEMIX_USER" ]; then 
+            echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
+            exit 1
+        fi 
+        if [ -z "$BLUEMIX_PASSWORD" ]; then 
+            echo -e "${red} Please set BLUEMIX_USER on environment ${no_color} "
+            exit 1 
+        fi 
+        if [ -z "$BLUEMIX_ORG" ]; then 
+            export BLUEMIX_ORG=$BLUEMIX_USER
+        fi 
+        if [ -z "$BLUEMIX_SPACE" ]; then 
+            export BLUEMIX_SPACE="dev"
+        fi 
+
+        if [ $REGISTRY_SERVER == $CCS_REGISTRY_HOST ]; then 
+            echo "Targeting CCS_API_HOST ${CCS_API_HOST},CCS_REGISTRY_HOST ${CCS_REGISTRY_HOST}, ${BLUEMIX_API_HOST} "
+        else
+            echo -e "${red}Registry specified in target ( ${REGISTRY_SERVER} ) does not match the registry specified as a parameter ( ${CCS_REGISTRY_HOST} ) ${no_color}"  
+            exit 1
+        fi 
     else 
-        echo -e "${red}API_KEY must be set in the environement.  Add this in setenv.sh in the root of your project. ${no_color}"
-        exit 1
+        echo -e "${red}Unknown ${BLUEMIX_TARGET} specified"
     fi 
-fi
+else 
+    echo "Reading bluemix target environment from pipeline configuration"
+    echo -e "${label_color}TBD: load information from Cloud Fourndry credentials ${no_color}"
+fi 
 
 ######################
 # Install ICE CLI    #
@@ -65,28 +84,67 @@ fi
 debugme echo "##################"
 debugme echo "installing ICE"
 debugme echo "##################"
-ice help >> init.log 2>&1  
+ice help 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     pushd . 
     cd $EXT_DIR
-    sudo apt-get -y install python2.7 >> init.log 2>&1 
-    debugme more pythoninstall.log 
-    python get-pip.py --user >> init.log 
+    sudo apt-get -y install python2.7
+    python --version 
+    python get-pip.py --user
     export PATH=$PATH:~/.local/bin
-    pip install --user icecli-2.0.zip >> init.log 2>&1 
-    ice help >> init.log 
+    pip --version 
+    # currently the 2.0 gives an error streaming output Defect 8153 
+    if [ -n "$API_KEY" ]; then 
+        debugme echo "Installing 1.0 CLI"
+        pip install --user icecli-1.0-0129.zip
+    else 
+        debugme echo "Installing 2.0 CLI"
+        pip install --user icecli-2.0.zip
+    fi 
+    ice help
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
         echo -e "${red}Failed to install IBM Container Service CLI ${no_color}"
+        debugme echo -e "${label}Is python installed ${no_color}"
+        debugme python --version
+        debugme which python 
+        debugme echo $PATH
         exit $RESULT
     fi 
     popd 
     echo -e "${label_color}Successfully installed IBM Container Service CLI ${no_color}"
 fi 
 
-ice login --key ${API_KEY} >> init.log 2>&1 
-RESULT=$?
+################################
+# Login to Container Service   #
+################################
+if [ -n "$API_KEY" ]; then 
+    echo -e "${label_color}Logging on with API_KEY${no_color}"
+    ice login --key ${API_KEY}
+    RESULT=$?
+elif [[ -n "$BLUEMIX_TARGET" ]]; then
+     #statements 
+#        export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
+#        export CCS_REGISTRY_HOST="api-ice.stage1.ng.bluemix.net"
+#        export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
+    echo -e "${label_color}Logging via environment properties${no_color}"
+    # removethis: 
+    echo -e "${label_color}Updating cf login${no_color}"
+    debugme more  /home/jenkins/.cf/config.json 
+    rm  /home/jenkins/.cf/config.json 
+    
+    debugme echo "login command: ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}"
+    ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}
+    debugme more  /home/jenkins/.cf/config.json 
+    debugme more /home/jenkins/.ice/ice-cfg.ini
+    debugme ice info
+    RESULT=$?
+else 
+    echo -e "${red}TBD: support for token passed from pipeline via Cloud Foundry ${no_color}"
+    exit 1 
+fi 
+
 if [ $RESULT -eq 1 ]; then
     echo -e "${red}Failed to login to IBM Container Service${no_color}"
     exit $RESULT
@@ -120,6 +178,8 @@ if [ -z $IMAGE_NAME ]; then
 else 
     echo -e "${label_color}Image being overridden by the environment.  Using ${IMAGE_NAME} ${no_color}"
 fi 
+
+
 ########################
 # Current Limitations  #
 ########################
