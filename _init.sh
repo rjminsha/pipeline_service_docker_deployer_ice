@@ -112,7 +112,7 @@ echo ""
 # Check in CF        #
 ######################
 echo -e "${label_color}removing IDS cf${no_color}"
-sudo mv /usr/bin/cf /usr/bin/_cf 
+mv /usr/bin/cf /usr/bin/_cf 
 cf help >> ${EXT_DIR}/init.log 2>&1 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
