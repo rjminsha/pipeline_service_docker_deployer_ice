@@ -108,6 +108,32 @@ echo "BLUEMIX_ORG: ${BLUEMIX_ORG}"
 echo "BLUEMIX_PASSWORD: xxxxx"
 echo ""
 
+######################
+# Check in CF        #
+######################
+echo -e "${label_color}removing IDS cf${no_color}"
+sudo mv /usr/bin/cf /usr/bin/_cf 
+cf help >> ${EXT_DIR}/init.log 2>&1 
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+    echo -e "Cloud Foundry CLI not installed"
+    pushd . 
+    cd $EXT_DIR 
+    gunzip cf-linux-amd64.tgz
+    tar -xvf cf-linux-amd64.tar 
+    cf help >> ${EXT_DIR}/init.log 2>&1
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then
+        pwd 
+        ls 
+        popd
+        echo -e "${red}Could not install the cloud foundry CLI ${no_color}"
+        exit 1
+    else 
+        echo "Installed Cloud Foundry CLI"
+    fi
+    popd
+fi 
 
 ######################
 # Install ICE CLI    #
@@ -175,7 +201,7 @@ elif [[ -n "$BLUEMIX_TARGET" ]]; then
     RESULT=$?
     debugme ice info
     debugme which cf 
-    
+
 else 
     echo -e "${red}TBD: support for token passed from pipeline via Cloud Foundry ${no_color}"
     exit 1 
