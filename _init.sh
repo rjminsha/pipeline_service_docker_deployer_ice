@@ -113,6 +113,9 @@ echo ""
 ######################
 echo -e "${label_color}removing IDS cf${no_color}"
 mv /usr/bin/cf /usr/bin/_cf 
+which cf 
+ls /usr/bin
+
 cf help >> ${EXT_DIR}/init.log 2>&1 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
@@ -133,6 +136,13 @@ if [ $RESULT -ne 0 ]; then
         echo "Installed Cloud Foundry CLI"
     fi
     popd
+fi 
+
+###############################
+# Configure extension PATH    #
+###############################
+if [ -n $EXT_DIR ]; then 
+    export PATH=$EXT_DIR:$PATH
 fi 
 
 ######################
@@ -210,13 +220,6 @@ fi
 if [ $RESULT -eq 1 ]; then
     echo -e "${red}Failed to login to IBM Container Service${no_color}"
     exit $RESULT
-fi 
-
-###############################
-# Configure extension PATH    #
-###############################
-if [ -n $EXT_DIR ]; then 
-    export PATH=$EXT_DIR:$PATH
 fi 
 
 ##############################
