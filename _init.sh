@@ -116,9 +116,9 @@ mv /usr/bin/cf /usr/bin/_cf
 which cf 
 ls /usr/bin
 
-cf help >> ${EXT_DIR}/init.log 2>&1 
-RESULT=$?
-if [ $RESULT -ne 0 ]; then
+#cf help >> ${EXT_DIR}/init.log 2>&1 
+#RESULT=$?
+#if [ $RESULT -ne 0 ]; then
     echo -e "Cloud Foundry CLI not installed"
     pushd . 
     cd $EXT_DIR 
@@ -136,7 +136,7 @@ if [ $RESULT -ne 0 ]; then
         echo "Installed Cloud Foundry CLI"
     fi
     popd
-fi 
+#fi 
 
 ###############################
 # Configure extension PATH    #
