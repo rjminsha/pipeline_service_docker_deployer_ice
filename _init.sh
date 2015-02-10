@@ -119,10 +119,6 @@ fi
 # Check in CF        #
 ######################
 echo -e "${label_color}removing IDS cf${no_color}"
-mv /usr/bin/cf /usr/bin/_cf 
-which cf 
-ls /usr/bin
-
 #cf help >> ${EXT_DIR}/init.log 2>&1 
 #RESULT=$?
 #if [ $RESULT -ne 0 ]; then
@@ -200,11 +196,6 @@ elif [[ -n "$BLUEMIX_TARGET" ]]; then
     echo -e "${label_color}Updating cf login${no_color}"
     debugme more  /home/jenkins/.cf/config.json 
     rm  /home/jenkins/.cf/config.json 
-    
-    debugme echo "testing connectivity to services"
-    debugme ping -c 5 -t 10 ${CCS_API_HOST}
-    debugme ping -c 5 -t 10 ${BLUEMIX_API_HOST}
-    debugme ping -c 5 -t 10 ${CCS_REGISTRY_HOST}
 
     debugme echo "login command: ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}"
     ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}
