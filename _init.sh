@@ -23,6 +23,8 @@ export red='\e[0;31m'
 export label_color='\e[0;33m'
 export no_color='\e[0m' # No Color
 
+export LOG_DIR=${EXT_DIR}
+
 ##################################################
 # Simple function to only run command if DEBUG=1 # 
 ### ###############################################
@@ -34,6 +36,12 @@ export -f debugme
 set +e
 set +x 
 
+###############################
+# Configure extension PATH    #
+###############################
+if [ -n $EXT_DIR ]; then 
+    export PATH=$EXT_DIR:$PATH
+fi 
 
 #################################
 # Set Bluemix Host Information  #
@@ -108,110 +116,104 @@ echo "BLUEMIX_ORG: ${BLUEMIX_ORG}"
 echo "BLUEMIX_PASSWORD: xxxxx"
 echo ""
 
-###############################
-# Configure extension PATH    #
-###############################
-if [ -n $EXT_DIR ]; then 
-    export PATH=$EXT_DIR:$PATH
-fi 
-
-######################
-# Check in CF        #
-######################
-echo -e "${label_color}removing IDS cf${no_color}"
-#cf help >> ${EXT_DIR}/init.log 2>&1 
-#RESULT=$?
-#if [ $RESULT -ne 0 ]; then
-    echo -e "Cloud Foundry CLI not installed"
-    pushd . 
-    cd $EXT_DIR 
-    gunzip cf-linux-amd64.tgz
-    tar -xvf cf-linux-amd64.tar 
-    cf help >> ${EXT_DIR}/init.log 2>&1
-    RESULT=$?
-    if [ $RESULT -ne 0 ]; then
-        pwd 
-        ls 
-        popd
-        echo -e "${red}Could not install the cloud foundry CLI ${no_color}"
-        exit 1
-    else 
-        echo "Installed Cloud Foundry CLI"
-    fi
-    popd
-#fi 
-
 ######################
 # Install ICE CLI    #
 ######################
 debugme echo "##################"
 debugme echo "installing ICE"
 debugme echo "##################"
-ice help 
+ice help >> ${LOG_DIR}/ice.log 2>&1 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     pushd . 
     cd $EXT_DIR
-    sudo apt-get -y install python2.7
-    python --version 
-    python get-pip.py --user
+    sudo apt-get -y install python2.7 >> ${LOG_DIR}/ice.log 2>&1
+    python get-pip.py --user >> ${LOG_DIR}/ice.log 2>&1
     export PATH=$PATH:~/.local/bin
-    pip --version 
-    # currently the 2.0 gives an error streaming output Defect 8153 
-    if [ -n "$API_KEY" ]; then 
-        debugme echo "Installing 1.0 CLI"
-        pip install --user icecli-1.0-0129.zip
-    else 
-        debugme echo "Installing 2.0 CLI"
-        pip install --user icecli-2.0.zip
-    fi 
-    ice help
+    pip install --user icecli-2.0.zip >> ${LOG_DIR}/ice.log 2>&1
+    ice help >> ${LOG_DIR}/ice.log 2>&1
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
         echo -e "${red}Failed to install IBM Container Service CLI ${no_color}"
-        debugme echo -e "${label}Is python installed ${no_color}"
+        debugme more ${LOG_DIR}/ice.log 
         debugme python --version
-        debugme which python 
-        debugme echo $PATH
         exit $RESULT
-    fi 
+    fi
     popd 
+    debugme more ${LOG_DIR}/ice.log 
     echo -e "${label_color}Successfully installed IBM Container Service CLI ${no_color}"
 fi 
 
+#############################
+# Install Cloud Foundry CLI #
+#############################
+debugme echo "#############################"
+debugme echo "# Install Cloud Foundry CLI #"
+debugme echo "#############################"
+echo -e "Cloud Foundry CLI not installed"
+pushd . 
+cd $EXT_DIR 
+gunzip cf-linux-amd64.tgz >> ${LOG_DIR}/cf.log 2>&1 
+tar -xvf cf-linux-amd64.tar >> ${LOG_DIR}/cf.log 2>&1 
+cf help >> ${LOG_DIR}/cf.log 2>&1 
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+    echo -e "${red}Could not install the cloud foundry CLI ${no_color}"
+    debugme more ${LOG_DIR}/cf.log
+    exit 1
+fi  
+popd
+debugme more ${LOG_DIR}/cf.log
+echo "Installed Cloud Foundry CLI"
+
+################################
+# Login to Container Service   #
+################################
 ################################
 # Login to Container Service   #
 ################################
 if [ -n "$API_KEY" ]; then 
     echo -e "${label_color}Logging on with API_KEY${no_color}"
-    ice login --key ${API_KEY}
+    ice login --key ${API_KEY} >> ${LOG_DIR}/login.log 2>&1
     RESULT=$?
 elif [[ -n "$BLUEMIX_TARGET" ]]; then
-     #statements 
-#        export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
-#        export CCS_REGISTRY_HOST="api-ice.stage1.ng.bluemix.net"
-#        export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
+    # User wants to specify all information 
     echo -e "${label_color}Logging via environment properties${no_color}"
-    # removethis: 
-    echo -e "${label_color}Updating cf login${no_color}"
-    debugme more  /home/jenkins/.cf/config.json 
-    rm  /home/jenkins/.cf/config.json 
-
     debugme echo "login command: ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}"
-    ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}
+    ice login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE} >> ${LOG_DIR}/login.log 2>&1
     RESULT=$?
-    debugme ice info
-    debugme which cf 
-
 else 
-    echo -e "${red}TBD: support for token passed from pipeline via Cloud Foundry ${no_color}"
-    exit 1 
+    # User wants to login to production container service 
+    if [ -f "~/.cf/config.json" ]; then 
+        # we are already logged in.  Simply check via ice command 
+        echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
+        echo "checking login to api server" >> ${LOG_DIR}/login.log 2>&1
+        ice ps >> ${LOG_DIR}/login.log 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]; then
+            echo "checking login to registry server" >> ${LOG_DIR}/login.log 2>&1
+            ice images >> ${LOG_DIR}/login.log 2>&1
+            RESULT=$? 
+        fi 
+    else 
+        # we need to login directly 
+        echo -e "${label_color}Logging into IBM Container Service${no_color}"
+            # User wants to specify all information 
+            echo -e "${label_color}Logging via environment properties${no_color}"
+            debugme echo "login command: ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE}"
+            ice --verbose login --cf -H ${CCS_API_HOST} -R ${CCS_REGISTRY_HOST} --api ${BLUEMIX_API_HOST}  --user ${BLUEMIX_USER} --psswd ${BLUEMIX_PASSWORD} --org ${BLUEMIX_ORG} --space ${BLUEMIX_SPACE} >> ${LOG_DIR}/login.log 2>&1
+            RESULT=$?
+    fi 
 fi 
 
+debugme ice info 
+debugme more ${LOG_DIR}/login.log
+
+# check login result 
 if [ $RESULT -eq 1 ]; then
     echo -e "${red}Failed to login to IBM Container Service${no_color}"
     exit $RESULT
-fi 
+fi
 
 ##############################
 # Identify the Image to use  #
