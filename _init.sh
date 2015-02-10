@@ -108,6 +108,13 @@ echo "BLUEMIX_ORG: ${BLUEMIX_ORG}"
 echo "BLUEMIX_PASSWORD: xxxxx"
 echo ""
 
+###############################
+# Configure extension PATH    #
+###############################
+if [ -n $EXT_DIR ]; then 
+    export PATH=$EXT_DIR:$PATH
+fi 
+
 ######################
 # Check in CF        #
 ######################
@@ -137,13 +144,6 @@ ls /usr/bin
     fi
     popd
 #fi 
-
-###############################
-# Configure extension PATH    #
-###############################
-if [ -n $EXT_DIR ]; then 
-    export PATH=$EXT_DIR:$PATH
-fi 
 
 ######################
 # Install ICE CLI    #
