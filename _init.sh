@@ -102,6 +102,11 @@ if [ -n "$BLUEMIX_TARGET" ]; then
         export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
         export CCS_REGISTRY_HOST="registry-ice.stage1.ng.bluemix.net"
         export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
+    elif [ "$BLUEMIX_TARGET" == "prod" ]; then 
+        echo -e "Targetting production Bluemix"
+        export CCS_API_HOST="api-ice.ng.bluemix.net" 
+        export CCS_REGISTRY_HOST="registry-ice.ng.bluemix.net"
+        export BLUEMIX_API_HOST="api.ng.bluemix.net"
     else 
         echo -e "${red}Unknown Bluemix environment specified"
     fi 
@@ -164,12 +169,8 @@ else
     #echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
     #echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
     #echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini
-    ls ~/.cf 
-    cat ~/.cf/config.json 
-    cat ~/.ice/ice-cfg.ini
-    
+    cat ~/.ice/ice-cfg.ini    
     ice info
-
     ice ps
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
