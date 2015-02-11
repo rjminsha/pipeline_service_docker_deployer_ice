@@ -159,8 +159,8 @@ else
     echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
     echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini
     ls ~/.cf 
-    more ~/.cf/config.json 
-    more ~/.ice/ice-cfg.ini
+    cat ~/.cf/config.json 
+    cat ~/.ice/ice-cfg.ini
 
 
     ice ps
@@ -190,7 +190,7 @@ if [ -z $IMAGE_NAME ]; then
     if [ -f build.properties ]; then
         . build.properties 
         export IMAGE_NAME
-        debugme more build.properties
+        debugme cat build.properties
         echo "echo IMAGE_NAME: $IMAGE_NAME"
     fi  
     if [ -z $IMAGE_NAME ]; then
