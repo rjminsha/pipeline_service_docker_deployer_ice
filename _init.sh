@@ -157,6 +157,7 @@ else
     echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
     cp ice-cfg.ini ~/.ice/
     cf apps 
+    python cf_parser.js 
     #echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
     #echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
     #echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini

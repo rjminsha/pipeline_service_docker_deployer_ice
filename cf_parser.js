@@ -20,6 +20,7 @@ parseconfig = function(configfile, callback){
         throw err;
       }
       cfconfig = JSON.parse(data);
+      console.log(cfconfig);
       callback(cfconfig['OrganizationFields'].Name, cfconfig['SpaceFields'].Name, cfconfig.RefreshToken, cfconfig.AccessToken);
     });
 }
