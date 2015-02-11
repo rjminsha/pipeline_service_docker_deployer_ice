@@ -40,9 +40,9 @@ fi
 export LOG_DIR=$EXT_DIR
 
 set +e
-set +x 
+set -x 
 
-cf target
+cf apps 
 
 ###############################
 # Configure extension PATH    #
@@ -157,12 +157,14 @@ else
     # we are already logged in.  Simply check via ice command 
     mkdir -p ~/.ice
     echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
-    echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
-    echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
-    echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini
+    cp ice-cfg.ini ~/.ice/
+    #echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
+    #echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
+    #echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini
     ls ~/.cf 
     cat ~/.cf/config.json 
     cat ~/.ice/ice-cfg.ini
+    
     ice info
 
     ice ps
