@@ -159,7 +159,7 @@ else
     cf apps 
     pushd . 
     cd ${EXT_DIR}
-    python cf_parser.js
+    node cf_parser.js
     popd  
     #echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
     #echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
