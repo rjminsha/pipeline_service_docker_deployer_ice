@@ -42,6 +42,8 @@ export LOG_DIR=$EXT_DIR
 set +e
 set +x 
 
+cf target
+
 ###############################
 # Configure extension PATH    #
 ###############################
@@ -161,7 +163,7 @@ else
     ls ~/.cf 
     cat ~/.cf/config.json 
     cat ~/.ice/ice-cfg.ini
-
+    ice info
 
     ice ps
     RESULT=$?
