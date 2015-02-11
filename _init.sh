@@ -156,10 +156,12 @@ else
     mkdir -p ~/.ice
     echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
     echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
-    echo "reg_host = ${CCS_REGISTRY_HOST}" > ~/.ice/ice-cfg.ini 
-    echo "cf_api_url = ${BLUEMIX_API_HOST}" > ~/.ice/ice-cfg.ini
+    echo "reg_host = ${CCS_REGISTRY_HOST}" >> ~/.ice/ice-cfg.ini 
+    echo "cf_api_url = ${BLUEMIX_API_HOST}" >> ~/.ice/ice-cfg.ini
+    ls ~/.cf 
+    more ~/.cf/config.json 
     more ~/.ice/ice-cfg.ini
-    more ~/.cf/config.json
+
 
     ice ps
     RESULT=$?
