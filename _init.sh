@@ -153,7 +153,14 @@ elif [ -n "$BLUEMIX_TARGET" ] || [ ! -f ~/.cf/config.json ]; then
     RESULT=$?
 else 
     # we are already logged in.  Simply check via ice command 
+    mkdir -p ~/.ice
     echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
+    echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
+    echo "reg_host = ${CCS_REGISTRY_HOST}" > ~/.ice/ice-cfg.ini 
+    echo "cf_api_url = ${BLUEMIX_API_HOST}" > ~/.ice/ice-cfg.ini
+    debugme more ~/.ice/ice-cfg.ini
+    debugme more ~/.cf/config.json
+
     ice ps &> /dev/null
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
