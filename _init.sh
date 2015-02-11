@@ -31,7 +31,7 @@ debugme() {
 }
 export -f debugme 
 
-if [ $DEBUG = 1 ]; then 
+if [ $DEBUG == 1 ]; then 
     export ICE_ARGS="--verbose"
 else
     export ICE_ARGS=""
@@ -66,7 +66,7 @@ if [ $RESULT -ne 0 ]; then
     pip install --user icecli-2.0.zip 
     # still getting a streaming error 
     #echo -e "${red}Issues encountered building with ICE 2.0 CLI, trying 1.0 version${no_color}"
-    pip install --user icecli-1.0-0129.zip 
+    #pip install --user icecli-1.0-0129.zip 
     ice help &> /dev/null
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
@@ -158,14 +158,14 @@ else
     echo "ccs_host = ${CCS_API_HOST}" > ~/.ice/ice-cfg.ini 
     echo "reg_host = ${CCS_REGISTRY_HOST}" > ~/.ice/ice-cfg.ini 
     echo "cf_api_url = ${BLUEMIX_API_HOST}" > ~/.ice/ice-cfg.ini
-    debugme more ~/.ice/ice-cfg.ini
-    debugme more ~/.cf/config.json
+    more ~/.ice/ice-cfg.ini
+    more ~/.cf/config.json
 
-    ice ps &> /dev/null
+    ice ps
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
         echo "checking login to registry server" 
-        ice images &> /dev/null
+        ice images
         RESULT=$? 
     fi 
 fi 
