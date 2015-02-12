@@ -175,7 +175,7 @@ deploy_red_black () {
             FLOATING_IP=$(cat inspect.log | grep "PublicIpAddress" | awk '{print $2}')
             temp="${FLOATING_IP%\"}"
             FLOATING_IP="${temp#\"}"
-            if [ FOUND -eq 0 ]; then 
+            if [ $FOUND -eq 0 ]; then 
                 # this is the first previous deployment I have found
                 if [ -z "${FLOATING_IP}" ]; then 
                     echo "${CONTAINER_NAME}_${COUNTER} did not have a floating IP so allocating one"
