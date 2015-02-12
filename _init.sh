@@ -65,6 +65,7 @@ if [ "${TEST}" == "inventory" ]; then
     IDS_STATUS="4a1a8a84-1a14-453b-80d4-e6d79f895395"
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
+    exit 0
 fi 
 ###############################
 # Configure extension PATH    #
