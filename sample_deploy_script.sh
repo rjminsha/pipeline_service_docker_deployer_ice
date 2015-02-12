@@ -154,7 +154,7 @@ deploy_public () {
 }
 
 deploy_red_black () {
-    echo -e "${red}red_black docker deploy not currently supported${no_color}"
+    echo -e "${label_color}Example red_black container deploy ${no_color}"
     # deploy new version of the application 
     local MY_CONTAINER_NAME="${CONTAINER_NAME}_${BUILD_NUMBER}"
     deploy_container ${MY_CONTAINER_NAME}
@@ -199,16 +199,13 @@ deploy_red_black () {
     if [ "${FLOATING_IP}" = '""' ]; then 
         echo "Requesting IP"
         FLOATING_IP=$(ice ip request | awk '{print $4}')
-        echo "> ${FLOATING_IP}"
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
             echo -e "${red}Failed to allocate IP address ${no_color}" 
             exit 1 
         fi
         temp="${FLOATING_IP%\"}"
-        echo "$temp"
         FLOATING_IP="${temp#\"}"
-        echo "$FLOATING_IP"
         ice ip bind ${FLOATING_IP} ${CONTAINER_NAME}_${BUILD_NUMBER}
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
