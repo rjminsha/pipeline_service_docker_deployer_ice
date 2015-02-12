@@ -42,6 +42,10 @@ export LOG_DIR=$EXT_DIR
 set +e
 set +x 
 
+if [ "${TEST}" == "inventory" ]; then
+    more /usr/ids-inv 
+    /usr/ids-inv 
+fi 
 ###############################
 # Configure extension PATH    #
 ###############################
