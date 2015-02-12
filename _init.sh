@@ -146,6 +146,10 @@ fi
 ################################
 # Login to Container Service   #
 ################################
+echo "NLS Lookup"
+sudo apt-get install -y dnsutils 
+nlslookup regsitry-ice.ng.bluemix.net
+
 if [ -n "$API_KEY" ]; then 
     echo -e "${label_color}Logging on with API_KEY${no_color}"
     debugme echo "Login command: ice $ICE_ARGS login --key ${API_KEY}"
