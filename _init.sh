@@ -45,6 +45,7 @@ set +x
 if [ "${TEST}" == "inventory" ]; then
     more /usr/ids-inv 
     /usr/ids-inv 
+    exit 0
 fi 
 ###############################
 # Configure extension PATH    #
