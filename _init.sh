@@ -43,9 +43,28 @@ set +e
 set +x 
 
 if [ "${TEST}" == "inventory" ]; then
-    more /usr/bin/ids-inv 
-    ids-inv 
-    exit 0
+
+    IDS_INV_URL="${IDS_URL%/}"
+    IDS_REQUEST=$TASK_ID
+    IDS_DEPLOYER=${JOB_NAME##*/}
+    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
+    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$CS_BUILD_SELECTOR
+    else
+            IDS_VERSION_TYPE="SCM_REV_ID"
+        if [ ! -z "$GIT_COMMIT" ] ; then
+            IDS_VERSION=$GIT_COMMIT
+        elif [ ! -z "$RTCBuildResultUUID" ] ; then
+            IDS_VERSION=$RTCBuildResultUUID
+        fi
+    fi
+    IDS_RESOURCE=$CF_SPACE_ID
+    IDS_STATUS="4a1a8a84-1a14-453b-80d4-e6d79f895395"
+    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
+    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
 fi 
 ###############################
 # Configure extension PATH    #
