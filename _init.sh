@@ -148,7 +148,7 @@ fi
 ################################
 echo "NS Lookup"
 sudo apt-get install -y dnsutils 
-nslookup regsitry-ice.ng.bluemix.net
+nslookup registry-ice.ng.bluemix.net
 
 if [ -n "$API_KEY" ]; then 
     echo -e "${label_color}Logging on with API_KEY${no_color}"
