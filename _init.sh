@@ -43,8 +43,8 @@ set +e
 set +x 
 
 if [ "${TEST}" == "inventory" ]; then
-    more /usr/ids-inv 
-    /usr/ids-inv 
+    more /usr/bin/ids-inv 
+    ids-inv 
     exit 0
 fi 
 ###############################
