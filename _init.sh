@@ -40,7 +40,7 @@ fi
 export LOG_DIR=$EXT_DIR
 
 set +e
-set -x 
+set +x 
 
 ###############################
 # Configure extension PATH    #
