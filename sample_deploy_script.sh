@@ -165,6 +165,7 @@ deploy_red_black () {
 
     COUNTER=${BUILD_NUMBER}
     let COUNTER-=1
+    FOUND=0
     until [  $COUNTER -lt 1 ]; do
         ice inspect ${CONTAINER_NAME}_${COUNTER} > inspect.log 
         RESULT=$?
@@ -174,7 +175,7 @@ deploy_red_black () {
             FLOATING_IP=$(cat inspect.log | grep "PublicIpAddress" | awk '{print $2}')
             temp="${FLOATING_IP%\"}"
             FLOATING_IP="${temp#\"}"
-            if [ -z "${FOUND}" ]; then 
+            if [ FOUND -eq 0 ]; then 
                 # this is the first previous deployment I have found
                 if [ -z "${FLOATING_IP}" ]; then 
                     echo "${CONTAINER_NAME}_${COUNTER} did not have a floating IP so allocating one"
@@ -184,11 +185,11 @@ deploy_red_black () {
                     ice ip bind ${FLOATING_IP} ${CONTAINER_NAME}_${BUILD_NUMBER}
                     echo "keeping previous deployment: ${CONTAINER_NAME}_${COUNTER}"
                 fi 
-                FOUND="true"
+                FOUND=1
             else 
                 # remove
                 echo "removing previous deployment: ${CONTAINER_NAME}_${COUNTER}" 
-                echo "ice rm ${CONTAINER_NAME}_${COUNTER}"
+                ice rm ${CONTAINER_NAME}_${COUNTER}
             fi  
         fi 
         let COUNTER-=1
