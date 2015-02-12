@@ -213,7 +213,7 @@ fi
 # Current Limitations  #
 ########################
 if [ -z $IP_LIMIT ]; then 
-    export IP_LIMIT=2
+    export IP_LIMIT=8
 fi 
 if [ -z $CONTAINER_LIMIT ]; then 
     export CONTAINER_LIMIT=8

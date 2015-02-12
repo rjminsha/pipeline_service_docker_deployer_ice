@@ -214,7 +214,8 @@ deploy_red_black () {
             exit 1 
         fi 
     fi 
-    echo -e "${label_color}Public IP address of ${CONTAINER_NAME}_${BUILD_NUMBER} is ${FLOATING_IP} ${no_color}"
+    echo -e "${green}Public IP address of ${CONTAINER_NAME}_${BUILD_NUMBER} is ${FLOATING_IP} ${no_color}"
+    dump_info
 }
     
 ##################
