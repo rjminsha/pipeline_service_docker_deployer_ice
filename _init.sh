@@ -43,7 +43,6 @@ set +e
 set +x 
 
 if [ "${TEST}" == "inventory" ]; then
-
     IDS_INV_URL="${IDS_URL%/}"
     IDS_REQUEST=$TASK_ID
     IDS_DEPLOYER=${JOB_NAME##*/}
@@ -65,6 +64,29 @@ if [ "${TEST}" == "inventory" ]; then
     IDS_STATUS="4a1a8a84-1a14-453b-80d4-e6d79f895395"
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
+    exit 0
+elif [[ "${TEST}" == "inventorygroup" ]]; then
+    IDS_INV_URL="${IDS_URL%/}"
+    IDS_REQUEST=$TASK_ID
+    IDS_DEPLOYER=${JOB_NAME##*/}
+    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
+    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$CS_BUILD_SELECTOR
+    else
+            IDS_VERSION_TYPE="SCM_REV_ID"
+        if [ ! -z "$GIT_COMMIT" ] ; then
+            IDS_VERSION=$GIT_COMMIT
+        elif [ ! -z "$RTCBuildResultUUID" ] ; then
+            IDS_VERSION=$RTCBuildResultUUID
+        fi
+    fi
+    IDS_RESOURCE=$CF_SPACE_ID
+    IDS_STATUS="2bbf94eb-50c8-4d42-aaa9-4fb8fb8a07b0"
+    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
+    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION
     exit 0
 fi 
 ###############################
@@ -88,10 +110,7 @@ if [ $RESULT -ne 0 ]; then
     python --version 
     python get-pip.py --user &> /dev/null
     export PATH=$PATH:~/.local/bin
-    pip install --user icecli-2.0.zip 
-    # still getting a streaming error 
-    #echo -e "${red}Issues encountered building with ICE 2.0 CLI, trying 1.0 version${no_color}"
-    #pip install --user icecli-1.0-0129.zip 
+    pip install --user icecli-2.0.zip
     ice help &> /dev/null
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
@@ -101,7 +120,8 @@ if [ $RESULT -ne 0 ]; then
     fi
     popd 
     echo -e "${label_color}Successfully installed IBM Container Service CLI ${no_color}"
-fi 
+fi
+
 #############################
 # Install Cloud Foundry CLI #
 #############################
@@ -146,10 +166,6 @@ fi
 ################################
 # Login to Container Service   #
 ################################
-echo "NS Lookup"
-sudo apt-get install -y dnsutils 
-nslookup registry-ice.ng.bluemix.net
-
 if [ -n "$API_KEY" ]; then 
     echo -e "${label_color}Logging on with API_KEY${no_color}"
     debugme echo "Login command: ice $ICE_ARGS login --key ${API_KEY}"
