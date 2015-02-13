@@ -29,6 +29,7 @@ export no_color='\e[0m' # No Color
 debugme() {
   [[ $DEBUG = 1 ]] && "$@" || :
 }
+
 export -f debugme 
 
 if [[ $DEBUG = 1 ]]; then 

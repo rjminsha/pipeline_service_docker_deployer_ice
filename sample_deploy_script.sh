@@ -72,9 +72,73 @@ dump_info () {
         echo -e "${label_color}You have ${AVAILABLE} public IP addresses remaining${no_color}"
     fi  
 }
-
 update_inventory(){
+    local TYPE=$1
+    local NAME=$2 
+    local ACTION=$3
+    if [ $# ne 3 ]; then 
+        echo -e "${red}updating inventory expects a three inputs: 1. type 2. name 3. action. Where type is either group or container, and the name is the name of the container being added to the inventory.${no_color}"
+        return 1
+    fi  
+    local ID="undefined"
+    # find the container or group id 
+    if [ "$TYPE" == "container" ]; then 
+        ID=$(ice inspect ${NAME} | grep "\"Id\":" | awk '{print $2}')
+        RESULT=$?
+        if [ $RESULT -ne 0 ]; then
+            echo -e "${red}Could not find container called $NAME${no_color}"
+            ice ps 
+            return 1 
+        fi 
+    elif [ "${TYPE}" == "group"]; then
+        ID=$(ice group inspect ${NAME} | grep "\"Id\":" | awk '{print $2}')
+        if [ $RESULT -ne 0 ]; then
+            echo -e "${red}Could not find group called $NAME${no_color}"
+            ice group list 
+            return 1 
+        fi 
+    else 
+        echo -e "${red}Could not update inventory with unknown type: ${TYPE}${no_color}"
+        return 1
+    fi 
+    # trim off junk 
+    local temp="${FLOATING_IP%\"}"
+    ID="${temp#\"}"
+    echo "The ID of the $TYPE is: $ID"
+
+    # find other inventory information 
+    echo -e "${label_color}Updating inventory with deployment $NAME of a $TYPE ${no_color}"
     echo -e "${red}TBD: update inventory${no_color}"
+    IDS_INV_URL="${IDS_URL%/}"
+    IDS_REQUEST=$TASK_ID
+    IDS_DEPLOYER=${JOB_NAME##*/}
+    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
+    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
+        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
+        IDS_VERSION=$CS_BUILD_SELECTOR
+    else
+            IDS_VERSION_TYPE="SCM_REV_ID"
+        if [ ! -z "$GIT_COMMIT" ] ; then
+            IDS_VERSION=$GIT_COMMIT
+        elif [ ! -z "$RTCBuildResultUUID" ] ; then
+            IDS_VERSION=$RTCBuildResultUUID
+        fi
+    fi
+    IDS_RESOURCE=$CF_SPACE_ID
+
+    # call IBM DevOps Service Inventory CLI to update the entry for this deployment
+    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
+    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $ID -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
+    exit 0
+}
+
+insert_inventory(){
+    update_inventory $1 $2 "insert"
+}
+delete_inventory(){
+    update_inventory $1 $2 "delete"
 }
 
 # function to wait for a container to start 
@@ -127,6 +191,9 @@ deploy_container() {
     # wait for container to start 
     wait_for ${MY_CONTAINER_NAME}
     RESULT=$?
+    if [ $RESULT -eq 0 ]; then 
+        insert_inventory "container" ${MY_CONTAINER_NAME}
+    fi 
     return ${RESULT}
 }
 
@@ -138,7 +205,6 @@ deploy_simple () {
         exit $RESULT
     fi
     dump_info
-    update_inventory
 }
 
 deploy_public () {
@@ -190,6 +256,7 @@ deploy_red_black () {
                 # remove
                 echo "removing previous deployment: ${CONTAINER_NAME}_${COUNTER}" 
                 ice rm ${CONTAINER_NAME}_${COUNTER}
+                delete_inventory "container" ${CONTAINER_NAME}_${COUNTER}
             fi  
         fi 
         let COUNTER-=1
