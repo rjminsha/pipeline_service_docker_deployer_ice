@@ -85,7 +85,7 @@ elif [[ "${TEST}" == "inventorygroup" ]]; then
     fi
     IDS_RESOURCE=$CF_SPACE_ID
     IDS_STATUS="2bbf94eb-50c8-4d42-aaa9-4fb8fb8a07b0"
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
+    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION
     exit 0
 fi 
