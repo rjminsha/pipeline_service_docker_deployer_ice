@@ -102,7 +102,7 @@ update_inventory(){
         return 1
     fi 
     # trim off junk 
-    local temp="${ID%\"}"
+    local temp="${ID%\",}"
     ID="${temp#\"}"
     echo "The ID of the $TYPE is: $ID"
 
