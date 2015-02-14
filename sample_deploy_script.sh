@@ -102,7 +102,7 @@ update_inventory(){
         return 1
     fi 
     # trim off junk 
-    local temp="${FLOATING_IP%\"}"
+    local temp="${ID%\"}"
     ID="${temp#\"}"
     echo "The ID of the $TYPE is: $ID"
 
@@ -129,7 +129,7 @@ update_inventory(){
     IDS_RESOURCE=$CF_SPACE_ID
 
     # call IBM DevOps Service Inventory CLI to update the entry for this deployment
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
+    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $ID -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $ID -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
     exit 0
 }
