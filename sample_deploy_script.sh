@@ -76,7 +76,7 @@ update_inventory(){
     local TYPE=$1
     local NAME=$2 
     local ACTION=$3
-    if [ $# ne 3 ]; then 
+    if [ $# -ne 3 ]; then 
         echo -e "${red}updating inventory expects a three inputs: 1. type 2. name 3. action. Where type is either group or container, and the name is the name of the container being added to the inventory.${no_color}"
         return 1
     fi  
