@@ -191,13 +191,14 @@ echo -e "${label_color}Successfully installed Cloud Foundry CLI ${no_color}"
 #################################
 if [ -n "$BLUEMIX_TARGET" ]; then
     if [ "$BLUEMIX_TARGET" == "staging" ]; then 
+        debugme echo "targetting staging environment"
         export CCS_API_HOST="api-ice.stage1.ng.bluemix.net" 
         export CCS_REGISTRY_HOST="registry-ice.stage1.ng.bluemix.net"
         export BLUEMIX_API_HOST="api.stage1.ng.bluemix.net"
         export ICE_CFG="ice-cfg-staging.ini"
 
     elif [ "$BLUEMIX_TARGET" == "prod" ]; then 
-        echo -e "Targetting production Bluemix"
+        debugme echo -e "Targetting production Bluemix"
         export CCS_API_HOST="api-ice.ng.bluemix.net" 
         export CCS_REGISTRY_HOST="registry-ice.ng.bluemix.net"
         export BLUEMIX_API_HOST="api.ng.bluemix.net"
@@ -219,6 +220,7 @@ fi
 ################################
 # Login to Container Service   #
 ################################
+debugme echo "BLUEMIX_TARGET: $BLUEMIX_TARGET"
 if [ -n "$API_KEY" ]; then 
     echo -e "${label_color}Logging on with API_KEY${no_color}"
     debugme echo "Login command: ice $ICE_ARGS login --key ${API_KEY}"
