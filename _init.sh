@@ -290,6 +290,10 @@ fi
 # If the IMAGE_NAME is set in the environment then use that.  
 # Else assume the input is coming from the build.properties created and archived by the Docker builder job
 if [ -z $IMAGE_NAME ]; then
+    debugme "finding build.properties"
+    debugme pwd 
+    debugme ls
+
     if [ -f build.properties ]; then
         . build.properties 
         export IMAGE_NAME
