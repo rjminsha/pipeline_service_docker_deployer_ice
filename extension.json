@@ -18,7 +18,7 @@
         {
             "name": "DEPLOY_TYPE",
             "type": "Text",
-            "required": "true",
+            "required": "false",
             "default_value": "red_black",
             "label_key": "DEPLOY_TYPE_KEY",
             "desc_key": "DEPLOY_TYPE_DESC"
@@ -26,7 +26,8 @@
         {
             "name": "CONTAINER_NAME",
             "type": "Text",
-            "required": "false",
+            "required": "true",
+            "default_value": "myApplicationName",
             "label_key": "CONTAINER_NAME_KEY",
             "desc_key": "CONTAINER_NAME_DESC"
         },
