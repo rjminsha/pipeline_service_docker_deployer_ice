@@ -67,7 +67,7 @@ chmod +x ice_container_deploy.sh
 # To view/fork this script goto: https://gist.github.com/rjminsha/ee3666e33865dcd10e21  
 git clone https://gist.github.com/ee3666e33865dcd10e21.git scripts/containergroupdeploy
 cd scripts/containergroupdeploy
-chmod +x ice_container_deploy.sh  
+chmod +x ice_container_group_deploy.sh  
 ./ice_container_group_deploy.sh 
 
 # run some tests 

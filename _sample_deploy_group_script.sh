@@ -183,12 +183,16 @@ deploy_group() {
     wait_for_group ${MY_GROUP_NAME}
     RESULT=$?
     if [ $RESULT -eq 0 ]; then 
-        ice route bind $ROUTE_HOSTNAME $ROUTE_DOMAIN $MY_GROUP_NAME
-        RESULT=$?
-        if [ $RESULT -eq 0 ]; then 
-            insert_inventory "containergroup" ${MY_GROUP_NAME}
-        else
-            echo -e "${red}Failed to map $ROUTE_HOSTNAME $ROUTE_DOMAIN to $MY_GROUP_NAME ${no_color}"
+        if [[ ( -n "${ROUTE_DOMAIN}" ) && ( -n "${ROUTE_HOSTNAME}" ) ]]; then 
+            ice route bind $ROUTE_HOSTNAME $ROUTE_DOMAIN $MY_GROUP_NAME
+            RESULT=$?
+            if [ $RESULT -eq 0 ]; then 
+                insert_inventory "containergroup" ${MY_GROUP_NAME}
+            else
+                echo -e "${red}Failed to map $ROUTE_HOSTNAME $ROUTE_DOMAIN to $MY_GROUP_NAME ${no_color}"
+            fi 
+        else 
+            echo "No route defined, so not bind it to ${MY_GROUP_NAME}"
         fi 
     else 
         echo -e "${red}Failed to deploy group${no_color}"
@@ -228,13 +232,17 @@ deploy_red_black () {
                 # this is the previous version so keep it around 
                 echo "keeping previous deployment: ${MY_GROUP_NAME}_${COUNTER}"
                 FOUND=1
-            else 
+            elif [[ ( -n "${ROUTE_DOMAIN}" ) && ( -n "${ROUTE_HOSTNAME}" ) ]]; then
+                #statements
                 # remove this group 
+                echo "removing route $ROUTE_HOSTNAME $ROUTE_DOMAIN from ${MY_GROUP_NAME}_${COUNTER}" 
                 ice route unmap $ROUTE_HOSTNAME $ROUTE_DOMAIN $MY_GROUP_NAME
-                echo "removing previous deployment: ${MY_GROUP_NAME}_${COUNTER}" 
+                echo "removing group ${MY_GROUP_NAME}_${COUNTER}"
                 ice group rm ${MY_GROUP_NAME}_${COUNTER}
                 delete_inventory "group" ${MY_GROUP_NAME}_${COUNTER}
-            fi  
+            else 
+                echo "No route defined, so not unbinding it from ${MY_GROUP_NAME}_${COUNTER}"
+            fi 
         fi 
         let COUNTER-=1
     done
@@ -255,6 +263,13 @@ if [ -z "$GROUP_MAX" ]; then
 fi 
 if [ -z "$GROUP_DESIRED" ]; then 
   export GROUP_DESIRED=1 
+fi 
+
+if [ -z "$ROUTE_HOSTNAME" ]; then 
+    echo -e "${label_color}ROUTE_HOSTNAME not set${no_color}"
+fi 
+if [ -z "$ROUTE_DOMAIN" ]; then 
+    echo -e "${label_color}ROUTE_DOMAIN not set${no_color}"
 fi 
 
 if [ "${DEPLOY_TYPE}" == "simple" ]; then
