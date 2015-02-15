@@ -300,7 +300,7 @@ if [ -z $IMAGE_NAME ]; then
         . build.properties 
         export IMAGE_NAME
         debugme cat build.properties
-        echo "echo IMAGE_NAME: $IMAGE_NAME"
+        echo "IMAGE_NAME: $IMAGE_NAME"
     fi  
     if [ -z $IMAGE_NAME ]; then
         echo -e "${red}IMAGE_NAME not set.  Set the IMAGE_NAME in the environment or provide a Docker build job as input to this deploy job ${no_label}"
