@@ -51,11 +51,24 @@ echo -e \"${label_color}Starting deployment script${no_color}\"
 # Based on the organization and space selected in the Job credentials are in place for both IBM Container Service and IBM Bluemix 
 
 # The following are some example deployment scripts.  Use these as is or fork them and include your updates here: 
+
+#############################
+# Deploy using Containers 
+#############################
 # To view/fork this script goto: https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04  
 git clone https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04 scripts/containerdeploy
 cd scripts/containerdeploy
 chmod +x ice_container_deploy.sh  
 ./ice_container_deploy.sh 
+
+#############################
+# Deploy using Groups 
+#############################
+# To view/fork this script goto: https://gist.github.com/rjminsha/ee3666e33865dcd10e21  
+git clone https://gist.github.com/ee3666e33865dcd10e21.git scripts/containergroupdeploy
+cd scripts/containergroupdeploy
+chmod +x ice_container_deploy.sh  
+./ice_container_group_deploy.sh 
 
 # run some tests 
 
