@@ -62,7 +62,7 @@ if [ "${TEST}" == "inventory" ]; then
         fi
     fi
     IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="4a1a8a84-1a14-453b-80d4-e6d79f895395"
+    IDS_STATUS="66260806-6a93-42a7-9bdb-794ee8e021fe"
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
     exit 0
@@ -85,7 +85,7 @@ elif [[ "${TEST}" == "inventorygroup" ]]; then
         fi
     fi
     IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="cc93ea42-3fd7-4fa3-b59d-8fae0deadc72"
+    IDS_STATUS="de2e78c2-b31e-4fb4-9869-925af799bb5c"
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION
     exit 0
