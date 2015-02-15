@@ -202,9 +202,9 @@ deploy_simple () {
     deploy_container ${MY_CONTAINER_NAME}
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
+        echo -e "${red}Error encountered with simple build strategy for ${CONTAINER_NAME}_${BUILD_NUMBER}${no_color}"
         exit $RESULT
     fi
-    dump_info
 }
 
 deploy_public () {
@@ -282,7 +282,6 @@ deploy_red_black () {
         fi 
     fi 
     echo -e "${green}Public IP address of ${CONTAINER_NAME}_${BUILD_NUMBER} is ${FLOATING_IP} ${no_color}"
-    dump_info
 }
     
 ##################
@@ -304,4 +303,8 @@ else
     usage
     deploy_red_black
 fi 
+ice ps 
+dump_info
+
+
 
