@@ -321,5 +321,5 @@ if [ -z $CONTAINER_LIMIT ]; then
 fi 
 sudo apt-get install bc &> /dev/null
 
-echo -e "${label_color}Initialization complete${no_color}"
+echo -e "${label_color}Initialization complete ${no_color}"
 
