@@ -164,6 +164,8 @@ wait_for (){
  
 deploy_container() {
     local MY_CONTAINER_NAME=$1 
+    echo "deploying container ${MY_CONTAINER_NAME}"
+
     if [ -z MY_CONTAINER_NAME ];then 
         echo "${red}No container name was provided${no_color}"
         return 1 
@@ -173,17 +175,10 @@ deploy_container() {
     ice inspect ${MY_CONTAINER_NAME} > /dev/null
     local FOUND=$?
     if [ ${FOUND} -eq 0 ]; then 
-        echo "Removing previous deployment with the same name: ${MY_CONTAINER_NAME}"
-        ice rm ${MY_CONTAINER_NAME}
-        while [ ${FOUND} -eq 0 ]; do
-            ice inspect ${MY_CONTAINER_NAME} > /dev/null
-            FOUND=$?
-            sleep 1
-        done
+        echo -e "${red}${MY_CONTAINER_NAME} already exists.  Please remove these containers or change the Name of the container or group being deployed${no_color}"
     fi  
  
     # run the container and check the results
-    echo "deploying container ${MY_CONTAINER_NAME}"
     ice run --name "${MY_CONTAINER_NAME}" ${IMAGE_NAME}
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
