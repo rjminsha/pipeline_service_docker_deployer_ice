@@ -62,7 +62,7 @@ if [ "${TEST}" == "inventory" ]; then
         fi
     fi
     IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="66260806-6a93-42a7-9bdb-794ee8e021fe"
+    IDS_STATUS="8ff04768-215e-4ca5-936d-295bf3acf4f8"
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
     bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
     exit 0

@@ -60,6 +60,7 @@ git clone https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04 scripts/containe
 cd scripts/containerdeploy
 chmod +x ice_container_deploy.sh  
 ./ice_container_deploy.sh 
+RESULT=$?
 
 #############################
 # Deploy using Groups 
@@ -69,10 +70,13 @@ git clone https://gist.github.com/ee3666e33865dcd10e21.git scripts/containergrou
 cd scripts/containergroupdeploy
 chmod +x ice_container_group_deploy.sh  
 ./ice_container_group_deploy.sh 
+RESULT=$?
 
-# run some tests 
+# check the results were good 
+if [ $RESULT -ne 0 ]; then
+    echo -e \"${red}Executed failed${no_color}\"
+fi 
 
-# adjust the deployment 
 
 echo -e \"${green}Execution complete${no_label}\"
 

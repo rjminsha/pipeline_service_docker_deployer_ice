@@ -184,15 +184,17 @@ deploy_group() {
     RESULT=$?
     if [ $RESULT -eq 0 ]; then 
         if [[ ( -n "${ROUTE_DOMAIN}" ) && ( -n "${ROUTE_HOSTNAME}" ) ]]; then 
-            ice route bind $ROUTE_HOSTNAME $ROUTE_DOMAIN $MY_GROUP_NAME
+            ice route map --hostname $ROUTE_HOSTNAME --domain $ROUTE_DOMAIN $MY_GROUP_NAME
             RESULT=$?
             if [ $RESULT -eq 0 ]; then 
                 insert_inventory "containergroup" ${MY_GROUP_NAME}
             else
                 echo -e "${red}Failed to map $ROUTE_HOSTNAME $ROUTE_DOMAIN to $MY_GROUP_NAME ${no_color}"
+                echo -e "${label_color}Not stopping execution due to failing in mapping${no_color}"
+                RESULT=0 
             fi 
         else 
-            echo "No route defined, so not bind it to ${MY_GROUP_NAME}"
+            echo "No route defined, so not map it to ${MY_GROUP_NAME}"
         fi 
     else 
         echo -e "${red}Failed to deploy group${no_color}"
@@ -236,12 +238,18 @@ deploy_red_black () {
                 #statements
                 # remove this group 
                 echo "removing route $ROUTE_HOSTNAME $ROUTE_DOMAIN from ${MY_GROUP_NAME}_${COUNTER}" 
-                ice route unmap $ROUTE_HOSTNAME $ROUTE_DOMAIN $MY_GROUP_NAME
+                ice route unmap --hostname $ROUTE_HOSTNAME --domain $ROUTE_DOMAIN $MY_GROUP_NAME
                 echo "removing group ${MY_GROUP_NAME}_${COUNTER}"
                 ice group rm ${MY_GROUP_NAME}_${COUNTER}
-                delete_inventory "group" ${MY_GROUP_NAME}_${COUNTER}
+                RESULT=$?
+                if [ $FOUND -eq 0 ]; then 
+                    delete_inventory "group" ${MY_GROUP_NAME}_${COUNTER}
+                else    
+                    echo -e "${label_color}Failed to remove previous group ${MY_GROUP_NAME}_${COUNTER} ${no_color}"
+                    ice group inspect ${MY_GROUP_NAME}_${COUNTER}
+                fi 
             else 
-                echo "No route defined, so not unbinding it from ${MY_GROUP_NAME}_${COUNTER}"
+                echo "No route defined, so not unmapping it from ${MY_GROUP_NAME}_${COUNTER}"
             fi 
         fi 
         let COUNTER-=1
@@ -266,10 +274,12 @@ if [ -z "$GROUP_DESIRED" ]; then
 fi 
 
 if [ -z "$ROUTE_HOSTNAME" ]; then 
-    echo -e "${label_color}ROUTE_HOSTNAME not set${no_color}"
+    echo -e "${red}ROUTE_HOSTNAME not set.  Please set the desired or existing route hostname as an environment proeprties on the stage.${no_color}"
+    exit 1 
 fi 
 if [ -z "$ROUTE_DOMAIN" ]; then 
-    echo -e "${label_color}ROUTE_DOMAIN not set${no_color}"
+    echo -e "${label_color}ROUTE_DOMAIN not set, defaulting to mybluemix.net${no_color}"
+    export ROUTE_DOMAIN="mybluemix.net"
 fi 
 
 if [ "${DEPLOY_TYPE}" == "simple" ]; then
@@ -283,6 +293,6 @@ else
     usage
     deploy_red_black
 fi 
-ice groups list 
+ice group list 
 ice ps 
 dump_info

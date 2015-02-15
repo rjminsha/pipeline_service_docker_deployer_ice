@@ -165,7 +165,7 @@ wait_for (){
 deploy_container() {
     local MY_CONTAINER_NAME=$1 
     echo "deploying container ${MY_CONTAINER_NAME}"
-
+ 
     if [ -z MY_CONTAINER_NAME ];then 
         echo "${red}No container name was provided${no_color}"
         return 1 
@@ -265,10 +265,14 @@ deploy_red_black () {
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
             echo -e "${red}Failed to bind ${FLOATING_IP} to ${CONTAINER_NAME}_${BUILD_NUMBER} ${no_color}" 
+            echo "Unsetting TEST_URL"
+            export TEST_URL=""
             exit 1 
         fi 
+        echo "Exporting TEST_URL:${TEST_URL}"
+        export TEST_URL="${URL_PROTOCOL}${FLOATING_IP}${URL_PORT}"
     fi 
-    echo -e "${green}Public IP address of ${CONTAINER_NAME}_${BUILD_NUMBER} is ${FLOATING_IP} ${no_color}"
+    echo -e "${green}Public IP address of ${CONTAINER_NAME}_${BUILD_NUMBER} is ${FLOATING_IP} and the TEST_URL is ${TEST_URL} ${no_color}"
 }
     
 ##################
@@ -277,6 +281,14 @@ deploy_red_black () {
 # Check to see what deployment type: 
 #   simple: simply deploy a container and set the inventory 
 #   red_black: deploy new container, assign floating IP address, keep original container 
+if [ -z "$URL_PROTOCOL" ]; then 
+ export URL_PROTOCOL="http://" 
+fi 
+if [ -z "$URL_PORT" ]; then 
+ export $URL_PORT=":80" 
+fi 
+ 
+ 
 echo "Deploying using ${DEPLOY_TYPE} strategy, for ${CONTAINER_NAME}, deploy number ${BUILD_NUMBER}"
 if [ "${DEPLOY_TYPE}" == "simple" ]; then
     deploy_simple
