@@ -19,7 +19,6 @@ usage () {
     echo "Set the following as a parameter on the job, or as an environment variable on the stage"
     echo "DEPLOY_TYPE: "
     echo "              simple: simply deploy a container and set the inventory"
-    echo "              simple_public: simply deploy the container and assign a floating IP address to the container"
     echo "              red_black: deploy new container, assign floating IP address, keep original container"
     echo ""
     
@@ -28,10 +27,6 @@ usage () {
     echo "API_KEY"
     echo "IMAGE_NAME"
     echo "CONTAINER_NAME"
-    echo "API_URL"
-    echo "CONTAINER_LIMIT"
-    echo "IP_LIMIT"
-
 }
 
 dump_info () {
@@ -108,7 +103,6 @@ update_inventory(){
 
     # find other inventory information 
     echo -e "${label_color}Updating inventory with deployment $NAME of a $TYPE ${no_color}"
-    echo -e "${red}TBD: update inventory${no_color}"
     IDS_INV_URL="${IDS_URL%/}"
     IDS_REQUEST=$TASK_ID
     IDS_DEPLOYER=${JOB_NAME##*/}
@@ -212,18 +206,6 @@ deploy_simple () {
     fi
 }
 
-deploy_public () {
-    # Check to see if the container is running 
-    # If the container is running check to see if it has a floating IP address 
-    # Check to see if a floating IP address is set in the configuration 
-    # If the floating IP address in the configuration is different from the current one, 
-    #       or if the floating IP address is not available then report an error 
-    # Deploy new container using IMAGE_NAME and CONTAINER_NAME 
-    # Assign floating IP address
-    echo -e "${red}simple_public docker deploy not currently supported${no_color}"
-    exit 1
-}
-
 deploy_red_black () {
     echo -e "${label_color}Example red_black container deploy ${no_color}"
     # deploy new version of the application 
@@ -294,7 +276,6 @@ deploy_red_black () {
 ##################
 # Check to see what deployment type: 
 #   simple: simply deploy a container and set the inventory 
-#   simple_public: simply deploy the container and assign a floating IP address to the container 
 #   red_black: deploy new container, assign floating IP address, keep original container 
 echo "Deploying using ${DEPLOY_TYPE} strategy, for ${CONTAINER_NAME}, deploy number ${BUILD_NUMBER}"
 if [ "${DEPLOY_TYPE}" == "simple" ]; then
@@ -310,6 +291,3 @@ else
 fi 
 ice ps 
 dump_info
-
-
-
