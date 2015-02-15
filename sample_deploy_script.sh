@@ -127,10 +127,12 @@ update_inventory(){
         fi
     fi
     IDS_RESOURCE=$CF_SPACE_ID
-    if [ -z $IDS_RESOURCE ]; then 
+    if [ -z "$IDS_RESOURCE" ]; then 
         echo -e "${red}Could not find CF SPACE in environment, using production space id${no_color}"
         IDS_RESOURCE="741f0392-92bd-45e2-9504-fcccfe20acd7"
-    fi
+    else
+        echo "spaceID is ${IDS_RESOURCE}"
+    fi 
 
     # call IBM DevOps Service Inventory CLI to update the entry for this deployment
     echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $ID -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
