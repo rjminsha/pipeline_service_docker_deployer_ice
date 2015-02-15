@@ -8,6 +8,10 @@
         {
             "type": "Artifacts",
             "inclusion" : "always"
+        },
+        {
+            "type": "Bluemix",
+            "inclusion" : "always"
         }
     ],
     "params": [
