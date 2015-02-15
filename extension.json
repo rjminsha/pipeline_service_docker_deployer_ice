@@ -19,7 +19,7 @@
             "name": "DEPLOY_TYPE",
             "type": "Text",
             "required": "true",
-            "default_value": "simple",
+            "default_value": "red_black",
             "label_key": "DEPLOY_TYPE_KEY",
             "desc_key": "DEPLOY_TYPE_DESC"
         },        
