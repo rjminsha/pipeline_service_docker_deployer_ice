@@ -47,7 +47,7 @@
 # The following colors have been defined to help with presentation of logs: green, red, label_color, no_color.  
 echo -e \"${label_color}Starting deployment script${no_color}\"
 
-# The Cloud Foundry CLI (cf), IBM Container Service CLI (ice), Git client and Python 2.7.3 have been installed.
+# The Cloud Foundry CLI (cf), IBM Container Service CLI (ice), Git client (git), IDS Inventory CLI (ids-inv) and Python 2.7.3 (python) have been installed.
 # Based on the organization and space selected in the Job credentials are in place for both IBM Container Service and IBM Bluemix 
 
 # The following are some example deployment scripts.  Use these as is or fork them and include your updates here: 
