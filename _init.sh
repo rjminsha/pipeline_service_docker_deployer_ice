@@ -206,6 +206,7 @@ if [ -n "$BLUEMIX_TARGET" ]; then
 
     else 
         echo -e "${red}Unknown Bluemix environment specified"
+        exit 1
     fi 
 else 
     echo -e "Targetting production Bluemix"
