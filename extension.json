@@ -76,6 +76,7 @@ RESULT=$?
 # check the results were good 
 if [ $RESULT -ne 0 ]; then
     echo -e \"${red}Executed failed${no_color}\"
+    exit $RESULT
 fi 
 
 
