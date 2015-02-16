@@ -62,6 +62,7 @@ chmod +x ice_container_deploy.sh
 ./ice_container_deploy.sh 
 RESULT=$?
 
+
 #############################
 # Deploy using Groups 
 #############################
@@ -78,9 +79,7 @@ if [ $RESULT -ne 0 ]; then
 fi 
 
 
-echo -e \"${green}Execution complete${no_label}\"
-
-",
+echo -e \"${green}Execution complete${no_label}\"",
             "label_key": "COMMAND_KEY",
             "desc_key": "COMMAND_DESC"
         }
