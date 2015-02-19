@@ -43,99 +43,6 @@ export LOG_DIR=$EXT_DIR
 set +e
 set +x 
 
-if [ "${TEST}" == "inventory" ]; then
-    IDS_INV_URL="${IDS_URL%/}"
-    IDS_REQUEST=$TASK_ID
-    IDS_DEPLOYER=${JOB_NAME##*/}
-    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
-    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$CS_BUILD_SELECTOR
-    else
-            IDS_VERSION_TYPE="SCM_REV_ID"
-        if [ ! -z "$GIT_COMMIT" ] ; then
-            IDS_VERSION=$GIT_COMMIT
-        elif [ ! -z "$RTCBuildResultUUID" ] ; then
-            IDS_VERSION=$RTCBuildResultUUID
-        fi
-    fi
-    IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="8ff04768-215e-4ca5-936d-295bf3acf4f8"
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
-    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
-    exit 0
-elif [[ "${TEST}" == "inventorygroup" ]]; then
-    IDS_INV_URL="${IDS_URL%/}"
-    IDS_REQUEST=$TASK_ID
-    IDS_DEPLOYER=${JOB_NAME##*/}
-    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
-    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$CS_BUILD_SELECTOR
-    else
-            IDS_VERSION_TYPE="SCM_REV_ID"
-        if [ ! -z "$GIT_COMMIT" ] ; then
-            IDS_VERSION=$GIT_COMMIT
-        elif [ ! -z "$RTCBuildResultUUID" ] ; then
-            IDS_VERSION=$RTCBuildResultUUID
-        fi
-    fi
-    IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="de2e78c2-b31e-4fb4-9869-925af799bb5c"
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION"
-    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION
-    exit 0
-elif [[ "${TEST}" == "inventorystaging" ]]; then
-    IDS_INV_URL="${IDS_URL%/}"
-    IDS_REQUEST=$TASK_ID
-    IDS_DEPLOYER=${JOB_NAME##*/}
-    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
-    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$CS_BUILD_SELECTOR
-    else
-            IDS_VERSION_TYPE="SCM_REV_ID"
-        if [ ! -z "$GIT_COMMIT" ] ; then
-            IDS_VERSION=$GIT_COMMIT
-        elif [ ! -z "$RTCBuildResultUUID" ] ; then
-            IDS_VERSION=$RTCBuildResultUUID
-        fi
-    fi
-    IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="ddc7a3ef-c4a2-401a-b6d9-935bef09f316"
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION"
-    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers -u $IDS_INV_URL -v $IDS_VERSION
-    exit 0
-elif [[ "${TEST}" == "inventorygroupstaging" ]]; then
-    IDS_INV_URL="${IDS_URL%/}"
-    IDS_REQUEST=$TASK_ID
-    IDS_DEPLOYER=${JOB_NAME##*/}
-    if [ ! -z "$COPYARTIFACT_BUILD_NUMBER" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$COPYARTIFACT_BUILD_NUMBER
-    elif [ ! -z "$CS_BUILD_SELECTOR" ] ; then
-        IDS_VERSION_TYPE="JENKINS_BUILD_ID"
-        IDS_VERSION=$CS_BUILD_SELECTOR
-    else
-            IDS_VERSION_TYPE="SCM_REV_ID"
-        if [ ! -z "$GIT_COMMIT" ] ; then
-            IDS_VERSION=$GIT_COMMIT
-        elif [ ! -z "$RTCBuildResultUUID" ] ; then
-            IDS_VERSION=$RTCBuildResultUUID
-        fi
-    fi
-    IDS_RESOURCE=$CF_SPACE_ID
-    IDS_STATUS="c639c12f-0821-419f-bdc7-38ee304313e3"
-    echo "bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION"
-    bash ids-inv -a insert -d $IDS_DEPLOYER -q $IDS_REQUEST -r $IDS_RESOURCE -s $IDS_STATUS -t ibm_containers_group -u $IDS_INV_URL -v $IDS_VERSION
-    exit 0
-fi 
 ###############################
 # Configure extension PATH    #
 ###############################
@@ -261,13 +168,12 @@ else
     # we are already logged in.  Simply check via ice command 
     echo -e "${label_color}Logging into IBM Container Service using credentials passed from IBM DevOps Services ${no_color}"
     mkdir -p ~/.ice
-    echo "Copying ${EXT_DIR}/${ICE_CFG}"
-    debugme more "${EXT_DIR}/${ICE_CFG}"
+    debugme cat "${EXT_DIR}/${ICE_CFG}"
     cp ${EXT_DIR}/${ICE_CFG} ~/.ice/ice-cfg.ini
-
-    debugme more ~/.ice/ice-cfg.ini
-    debugme more ~/.cf/config.json
-
+    debugme cat ~/.ice/ice-cfg.ini
+    debugme echo "config.json:"
+    debugme cat /home/jenkins/.cf/config.json | cut -c1-2
+    debugme cat /home/jenkins/.cf/config.json | cut -c3-
     ice --verbose ps > ps.log 
     debugme cat ps.log 
     RESULT=$?
