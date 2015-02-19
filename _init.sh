@@ -32,7 +32,7 @@ debugme() {
 
 export -f debugme 
 
-if [[ $DEBUG = 1 ]]; then 
+if [ $DEBUG -eq 1 ]; then 
     export ICE_ARGS="--verbose"
 else
     export ICE_ARGS=""
