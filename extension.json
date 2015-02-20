@@ -30,56 +30,51 @@
             "default_value": "myApplicationName",
             "label_key": "CONTAINER_NAME_KEY",
             "desc_key": "CONTAINER_NAME_DESC"
+        },        
+        {
+            "name": "PORT",
+            "type": "Text",
+            "required": "false",
+            "default_value": "80 --publish 443",
+            "label_key": "PORT_KEY",
+            "desc_key": "PORT_DESC"
         },
         {
             "name": "COMMAND",
             "type": "TextArea",
             "required": "true",
             "default_value" : "#!/bin/bash
-# The environment has been setup for you.  The following environment variables will be set: 
-# IMAGE_NAME: The name of the image used as input 
-# CCS_REGISTRY_HOST: The host of the IBM Container Service Registry 
-# IP_LIMIT: The max allowed public IP addresses for this space 
-# CONTAINER_LIMIT: The max allowed containers for this space 
-# CONTAINER_NAME: The name parameter exposed on this job
-# DEPLOY_TYPE: Input into the deployment strategy desired.  For example: simple, red_black
-
-# The following colors have been defined to help with presentation of logs: green, red, label_color, no_color.  
+# The following are some example deployment scripts.  Use these as is or fork them and include your updates here: 
 echo -e \"${label_color}Starting deployment script${no_color}\"
+# Deploy Container Group (define ROUTE_HOSTNAME, ROUTE_DOMAIN, BIND_TO, DESIRED on the environment 
+# To view/fork this script goto: https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04  
+git clone https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04 scripts
 
+# Deploy with containers (optionally define BIND_TO on the environment to bind an application with services) 
+# To view/fork this script goto: https://gist.github.com/rjminsha/ee3666e33865dcd10e21  
+# git clone https://gist.github.com/ee3666e33865dcd10e21.git scripts
+
+/bin/bash scripts/deploy.sh 
+RESULT=$?
+
+#########################
+# Environment DETAILS   #
+#########################
+# The environment has been setup.  
 # The Cloud Foundry CLI (cf), IBM Container Service CLI (ice), Git client (git), IDS Inventory CLI (ids-inv) and Python 2.7.3 (python) have been installed.
 # Based on the organization and space selected in the Job credentials are in place for both IBM Container Service and IBM Bluemix 
+# The following environment variables will be set: 
+# IMAGE_NAME: The name of the image used as input 
+# IP_LIMIT: The max allowed public IP addresses for this space 
+# CONTAINER_NAME: The name parameter exposed on this job
+# DEPLOY_TYPE: Input into the deployment strategy desired.  For example: simple, red_black
+# PORT: Ports to expose on the container or the group
+# The following colors have been defined to help with presentation of logs: green, red, label_color, no_color.  
 
-# The following are some example deployment scripts.  Use these as is or fork them and include your updates here: 
-
-#############################
-# Deploy using Containers 
-#############################
-# To view/fork this script goto: https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04  
-git clone https://gist.github.com/rjminsha/56d409c0c33d2e7cbf04 scripts/containerdeploy
-cd scripts/containerdeploy
-chmod +x ice_container_deploy.sh  
-./ice_container_deploy.sh 
-RESULT=$?
-
-
-#############################
-# Deploy using Groups 
-#############################
-# To view/fork this script goto: https://gist.github.com/rjminsha/ee3666e33865dcd10e21  
-git clone https://gist.github.com/ee3666e33865dcd10e21.git scripts/containergroupdeploy
-cd scripts/containergroupdeploy
-chmod +x ice_container_group_deploy.sh  
-./ice_container_group_deploy.sh 
-RESULT=$?
-
-# check the results were good 
 if [ $RESULT -ne 0 ]; then
-    echo -e \"${red}Executed failed${no_color}\"
+    echo -e \"${red}Executed failed or had warnings ${no_color}\"
     exit $RESULT
 fi 
-
-
 echo -e \"${green}Execution complete${no_label}\"",
             "label_key": "COMMAND_KEY",
             "desc_key": "COMMAND_DESC"
@@ -94,6 +89,7 @@ set +x
 set +e 
 export DEPLOY_TYPE=#DEPLOY_TYPE#
 export CONTAINER_NAME=#CONTAINER_NAME#
+export PORT=#PORT#
 . $EXT_DIR/_init.sh
 /bin/bash -e #COMMAND#"
     }
