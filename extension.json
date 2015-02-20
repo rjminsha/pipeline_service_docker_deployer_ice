@@ -35,7 +35,7 @@
             "name": "PORT",
             "type": "Text",
             "required": "false",
-            "default_value": "80 --publish 443",
+            "default_value": "80",
             "label_key": "PORT_KEY",
             "desc_key": "PORT_DESC"
         },
