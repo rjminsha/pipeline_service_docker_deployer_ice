@@ -226,7 +226,16 @@ fi
 if [ -z $CONTAINER_LIMIT ]; then 
     export CONTAINER_LIMIT=8
 fi 
-sudo apt-get install bc &> /dev/null
+
+########################
+# Adjust Build Number  #
+########################
+sudo apt-get install bc > /dev/null 
+if [ -n "$BUILD_OFFSET" ]; then 
+    echo "Using BUILD_OFFSET of $BUILD_OFFSET"
+    export APPLICATION_VERSION=$(echo "$APPLICATION_VERSION + $BUILD_OFFSET" | bc)
+    export BUILD_NUMBER=$(echo "$BUILD_NUMBER + $BUILD_OFFSET" | bc)
+fi 
 
 echo -e "${label_color}Initialization complete ${no_color}"
 
